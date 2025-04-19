@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Расписание</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://schedule.npi-tu.ru" crossorigin>
+    <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v2/faculties/2/years/1/groups/РПИа/schedule" as="fetch" crossorigin>
+    <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v1/class-intervals" as="fetch" crossorigin>
+    <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v1/class-types" as="fetch" crossorigin>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            overscroll-behavior-y: contain;
+            overflow-y: scroll;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #e1e1e1;
+            font-family: IBM Plex Mono, Noto Sans Mono Variable, Noto Sans Mono, monospace;
+            background-color: #000000;
+        }
+        .schedule-item, .schedule-item-active {
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            padding: 0 10px 0 10px;
+            gap: 6px;
+            margin: 0 0 18px 0;
+        }
+        .schedule-item-active {
+            scroll-margin-top: 4px;
+            padding: 10px;
+            outline-offset: -6px;
+            outline: 3px solid rgb(233, 20, 20);
+        }
+        .discipline-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .discipline-date {
+            align-self: center;
+        }
+        .discipline-name {
+            gap: 6px;
+            display: flex;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .discipline-description {
+            font-size: 16px;
+            color: #818181;
+        }
+        .discipline-badge {
+            opacity: 0.9;
+            color: #000000;
+            font-weight: normal;
+            font-size: 16px;
+            border-radius: 8px;
+            padding: 1px 5px 0px 4px;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+        const fetchJson = async (url) => {
+            const response = await fetch(url);
+            return await response.json();
+        }
+        const DAYS_OF_WEEK = [ 'воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота' ];
+        const [CLASS_INTERVALS, CLASS_TYPES, SCHEDULE] = await Promise.all([
+            fetchJson('https://schedule.npi-tu.ru/api/v1/class-intervals'),
+            fetchJson('https://schedule.npi-tu.ru/api/v1/class-types'),
+            fetchJson('https://schedule.npi-tu.ru/api/v2/faculties/2/years/1/groups/РПИа/schedule'),
+        ]);
+        const DATE_NOW = new Date().toLocaleDateString('ru-RU').replaceAll('.', '-');
+        const SEMESTER_START = new Date(SCHEDULE.semester.start);
+        const SEMESTER_END = new Date(SCHEDULE.semester.end);
+        const currentDate = new Date(SEMESTER_START);
+        while (currentDate <= SEMESTER_END) {
+            const currentDateStr = currentDate.toLocaleDateString('ru-RU').replaceAll('.', '-');
+            const spanDate = document.createElement('span');
+            spanDate.className = 'discipline-date';
+            spanDate.textContent = DAYS_OF_WEEK[currentDate.getDay()] + ' (' + currentDateStr.replaceAll('-', '.') + ')';
+            const discs = SCHEDULE.classes.filter(e => e.dates.includes(currentDateStr.split('-').reverse().join('-')));
+            const scheduleItem = document.createElement('div');
+            scheduleItem.setAttribute('id', currentDateStr);
+            scheduleItem.className = DATE_NOW === currentDateStr ? 'schedule-item-active' : 'schedule-item';
+            scheduleItem.appendChild(spanDate);
+            if (discs.length > 0) {
+                for (const disc of discs) {
+                    const disciplineInfo = document.createElement('div');
+                    const disciplineName = document.createElement('div');
+                    const disciplineDescription = document.createElement('div');
+                    const disciplineBadge = document.createElement('div');
+                    disciplineInfo.className = 'discipline-info';
+                    disciplineName.className = 'discipline-name';
+                    disciplineDescription.className = 'discipline-description';
+                    disciplineBadge.className = 'discipline-badge';
+                    disciplineName.textContent = disc.discipline.replace(/\(\d*? час\)/gm, '').toLowerCase();
+                    disciplineDescription.textContent = CLASS_INTERVALS[disc.class].start + ' - ' + CLASS_INTERVALS[disc.class].end;
+                    disciplineBadge.textContent = disc.type.toLowerCase();
+                    disciplineBadge.style.backgroundColor = CLASS_TYPES[disc.type].color;
+                    disciplineInfo.appendChild(disciplineName);
+                    disciplineInfo.appendChild(disciplineDescription);
+                    disciplineName.appendChild(disciplineBadge);
+                    scheduleItem.appendChild(disciplineInfo);
+                }
+            } else {
+                const disciplineDescription = document.createElement('div');
+                const disciplineInfo = document.createElement('div');
+                disciplineInfo.className = 'discipline-info';
+                disciplineDescription.className = 'discipline-description';
+                disciplineDescription.textContent = 'на этот день пар нет!!';
+                disciplineInfo.appendChild(disciplineDescription);
+                scheduleItem.appendChild(disciplineInfo);
+                document.body.appendChild(scheduleItem);
+            }
+            document.body.appendChild(scheduleItem);
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+        const currentDay = document.getElementById(DATE_NOW);
+        if (currentDay) currentDay.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'center' });
+    </script>
+</body>
+</html>
