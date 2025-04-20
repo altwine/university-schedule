@@ -103,7 +103,7 @@
             const response = await fetch(url);
             return await response.json();
         }
-        const API_BASE = 'https://schedule.npi-tu.ru/api/'
+        const API_BASE = 'https://schedule.npi-tu.ru/api/';
         const DAYS_OF_WEEK = ['воскресенье', 'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота'];
         const [CLASS_INTERVALS, CLASS_TYPES, SCHEDULE] = await Promise.all([
             fetchJson(`${API_BASE}v1/class-intervals`),
@@ -128,7 +128,7 @@
             scheduleItem.id = currentDateStr;
             scheduleItem.className = DATE_NOW === currentDateStr ? 'schedule-item-active' : 'schedule-item';
             if (DATE_NOW === currentDateStr) scheduleItem.ariaCurrent = 'date';
-            scheduleItem.setAttribute('aria-labelledby', `date-${currentDateStr}`)
+            scheduleItem.setAttribute('aria-labelledby', `date-${currentDateStr}`);
             scheduleItem.appendChild(spanDate);
             if (discs.length > 0) {
                 for (const disc of discs) {
