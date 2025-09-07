@@ -1,15 +1,142 @@
-<!doctype html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Расписание занятий 090304-РПИа-о24</title>
-        <link rel="dns-prefetch" href="https://schedule.npi-tu.ru">
-        <link rel="preconnect" href="https://schedule.npi-tu.ru" crossorigin>
-        <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v2/faculties/2/years/1/groups/РПИа/schedule" as="fetch" crossorigin>
-        <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v1/faculties/2/years/1/groups/РПИа/finals-schedule" as="fetch" crossorigin>
-        <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v1/class-intervals" as="fetch" crossorigin>
-        <link rel="prefetch" href="https://schedule.npi-tu.ru/api/v1/class-types" as="fetch" crossorigin>
-    <script defer>(()=>{"use strict";var e={611:function(){},825:function(e,t,a){a.a(e,async function(e,t){try{async function n(e){let t=await fetch(e);return await t.json()}a(611);let e=["воскресенье","понедельник","вторник","среда","четверг","пятница","суббота"],[l,r,o,c]=await Promise.all([n("https://schedule.npi-tu.ru/api/v1/class-intervals"),{ЗАЧ:{name:"Зачет",color:"#F0FBFF"},ЗАЧО:{name:"Зачет с оценкой",color:"#F0FBFF"},КОНТ:{name:"Контрольная работа",color:"#FFFBF0"},КП:{name:"Курсовой проект",color:"#FFFFFF"},"Л/ЛР":{name:"Лекция/лабораторная",color:"#F0FBFF"},"Л/П":{name:"Лекция/практика",color:"#F0FBFF"},ЛАБ:{name:"Лабораторная работа",color:"#E7E8F8"},ЛЕК:{name:"Лекция",color:"#E5FFD5"},"П/ЛР":{name:"Практика/лабораторная",color:"#F0FBFF"},ПР:{name:"Практическое занятие",color:"#D5F6FF"},ПЭКЗ:{name:"Переэкзаменовка",color:"#FFFBF0"},СЕМ:{name:"Семинар",color:"#FFFBF0"},ЭКЗ:{name:"Экзамен",color:"#F0FBFF"}},n(`https://schedule.npi-tu.ru/api/v2/faculties/2/years/1/groups/\u{420}\u{41F}\u{418}\u{430}/schedule`),n(`https://schedule.npi-tu.ru/api/v1/faculties/2/years/1/groups/\u{420}\u{41F}\u{418}\u{430}/finals-schedule`)]),i=new Date().toLocaleDateString("ru-RU").replaceAll(".","-");o.classes=o.classes.concat(c);let s=new Date(o.semester.start),d=new Date(o.finals.end),u=new Date(s),p=document.createDocumentFragment(),m=new Date(d).getTime();for(;u.getTime()<=m;){let t=u.toLocaleDateString("ru-RU").replaceAll(".","-"),a=document.createElement("span");a.className="discipline-date",a.textContent=`${e[u.getDay()]} (${t.replaceAll("-",".")})`;let n=t.split("-").reverse().join("-"),c=o.classes.filter(e=>{var t,a;return(null==e?void 0:e.date)===n||(null==e||null==(a=e.dates)||null==(t=a.includes)?void 0:t.call(a,n))}),s=document.createElement("div");if(s.id=t,s.className=i===t?"schedule-item-active":"schedule-item",s.appendChild(a),c.length>0)for(let e of c){let t=document.createElement("div"),a=document.createElement("div"),n=document.createElement("div"),o=document.createElement("div"),c=document.createElement("div");t.className="discipline-info",a.className="discipline-name",n.className="discipline-description",o.className="discipline-badge",c.className="discipline-badge",a.textContent=e.discipline.replace(/ \(\d*? час\)/gm,"").toLowerCase(),n.textContent=`${(null==e?void 0:e.class)?l[e.class].start:e.start} - ${(null==e?void 0:e.class)?l[e.class].end:e.end}`,c.textContent=e.auditorium.toLowerCase(),o.title=r[e.type].name.toLowerCase(),o.textContent=e.type.toLowerCase(),o.style.backgroundColor=r[e.type].color,t.append(a,n),a.append(c,o),s.appendChild(t)}else{let e=document.createElement("div"),t=document.createElement("div");t.className="discipline-info",e.className="discipline-description",e.textContent="на этот день пар нет!!",t.appendChild(e),s.appendChild(t)}p.appendChild(s),u.setDate(u.getDate()+1)}document.body.appendChild(p);let F=document.getElementById(i);F&&F.scrollIntoView({inline:"center",behavior:"instant"}),t()}catch(e){t(e)}},1)}},t={};function a(n){var l=t[n];if(void 0!==l)return l.exports;var r=t[n]={exports:{}};return e[n](r,r.exports,a),r.exports}(()=>{var e="function"==typeof Symbol?Symbol("webpack queues"):"__webpack_queues__",t="function"==typeof Symbol?Symbol("webpack exports"):"__webpack_exports__",n="function"==typeof Symbol?Symbol("webpack error"):"__webpack_error__",l=e=>{e&&e.d<1&&(e.d=1,e.forEach(e=>e.r--),e.forEach(e=>e.r--?e.r++:e()))},r=a=>a.map(a=>{if(null!==a&&"object"==typeof a){if(a[e])return a;if(a.then){var r=[];r.d=0,a.then(e=>{o[t]=e,l(r)},e=>{o[n]=e,l(r)});var o={};return o[e]=e=>e(r),o}}var c={};return c[e]=function(){},c[t]=a,c});a.a=(a,o,c)=>{c&&((i=[]).d=-1);var i,s,d,u,p=new Set,m=a.exports,F=new Promise((e,t)=>{u=t,d=e});F[t]=m,F[e]=e=>{i&&e(i),p.forEach(e),F.catch(function(){})},a.exports=F,o(a=>{s=r(a);var l,o=()=>s.map(e=>{if(e[n])throw e[n];return e[t]}),c=new Promise(t=>{(l=()=>t(o)).r=0;var a=e=>e!==i&&!p.has(e)&&(p.add(e),e&&!e.d&&(l.r++,e.push(l)));s.map(t=>t[e](a))});return l.r?c:o()},e=>(e?u(F[n]=e):d(m),l(i))),i&&i.d<0&&(i.d=0)}})(),a.rv=()=>"1.3.8",a.ruid="bundler=rspack@1.3.8",a(825)})();</script><style>:root{--primary:#e9e9e9;--secondary:#818181;--border:#e90000;--background:#000}*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-snap-type:y proximity;overscroll-behavior-y:contain;background-color:var(--background);overflow-y:scroll}body{color:var(--primary);flex-direction:column;align-items:center;font-family:IBM Plex Mono,Noto Sans Mono Variable,Noto Sans Mono,monospace;display:flex}.schedule-item,.schedule-item-active{contain:content;scroll-snap-align:start;flex-direction:column;gap:6px;width:100vw;max-width:720px;margin:0 0 18px;padding:0 10px;display:flex}.schedule-item-active{outline-offset:-6px;outline:3px dashed var(--border);padding:10px;scroll-margin-top:2px}.discipline-info{flex-direction:column;display:flex}.discipline-date{align-self:center;font-size:17px}.discipline-name{gap:6px;font-size:19px;font-weight:700;display:flex}.discipline-description{color:var(--secondary);font-size:17px}.discipline-badge{-webkit-user-select:none;user-select:none;opacity:.9;height:min-content;color:var(--background);background-color:var(--primary);border-radius:8px;margin-top:2px;padding:0 5px;font-size:17px;font-weight:400}::selection{color:var(--background);background-color:var(--primary)}</style></head>
-    <body></body>
-</html>
+<!DOCTYPE html><html lang="ru"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Расписание 090304-РПИа-о24</title><link rel="preconnect" href="https://schedule.npi-tu.ru/" crossorigin><link rel="dns-prefetch" href="https://schedule.npi-tu.ru/"><link rel="preload" href="https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/schedule" as="fetch" crossorigin><link rel="preload" href="https://schedule.npi-tu.ru/api/v1/class-intervals" as="fetch" crossorigin><link rel="preload" href="https://schedule.npi-tu.ru/api/v1/class-types" as="fetch" crossorigin><link rel="canonical" href="https://altwine.github.io/university-schedule/"><meta name="theme-color" content="#000000"><meta name="description" content="Удобное расписание занятий для группы 090304-РПИа-о24. Для личного использования."><meta property="og:title" content="Расписание 090304-РПИа-о24"><meta property="og:description" content="Удобное расписание занятий. Для личного использования."><meta property="og:type" content="website"><meta property="og:url" content="https://altwine.github.io/university-schedule/"><style>*{box-sizing:border-box}html,body{height:100%;margin:0;padding:0}body{background-color:#fff;flex-direction:column;font-family:system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;font-weight:600;display:flex}header{justify-content:space-between;margin-bottom:8px;padding:0 12px;display:flex;box-shadow:0 5px 10px 2px #223c501a}.menu-container{gap:4px;display:flex}.title{margin:0;padding:12px 0;font-size:24px;font-weight:700}.actions-container{align-items:center;gap:8px;display:flex}.action-button{cursor:pointer;border:1px solid #acacac;border-radius:8px;justify-content:center;align-items:center;width:40px;height:40px;display:flex}main{flex-direction:column;flex:1;height:min-content;display:flex}.week-navigator{justify-content:space-around;width:100%;display:flex}.day-selector{cursor:pointer;user-select:none;flex-direction:column;flex:1;align-items:center;gap:4px;padding:2px 0;display:flex}#day-name{color:#656565}#day-number{border-radius:8px;padding:10px 16px;font-weight:700}#day-number.selected{color:#fff;background-color:#1e90ff}.schedule-container{flex-direction:column;flex:1;gap:2px;display:flex}.class-container{flex:1;gap:8px;padding:8px;display:flex}.class-date{color:#656565;user-select:none;flex-direction:column;justify-content:space-between;display:flex}.dinner-line-container{user-select:none;align-items:center;gap:8px;padding:0 8px;display:none}.dinner-line{color:red;width:100%;height:0;margin:0}.dinner-text{color:#656565}#class-info-container{border-radius:4px;flex:1;gap:8px;width:100%;padding:6px;transition:opacity .15s ease-out;display:flex}.class-info{flex-direction:column;display:flex}#class-lecturer{color:#656565;font-size:14px}.pillar{border-radius:4px;width:4px}</style><body>
+        <header class="header">
+            <div class="menu-container">
+                <h1 id="title" class="title">Загрузка...</h1>
+            </div>
+            <div class="actions-container">
+                <div id="disable-dinner-button" class="action-button">
+                    <svg xmlns:xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 512 512"><path d="M480 96h-92l9-36 39-13c8-2 13-11 10-19a16 16 0 0 0-20-11l-47 16a16 16 0 0 0-11 11l-12 52H224c-8 0-16 7-16 15a16 16 0 0 0 16 17h3l1 9a8 8 0 0 0 8 7c39 0 74 11 100 32a122 122 0 0 1 35 42 123 123 0 0 1 10 30 8 8 0 0 0 3 4 72 72 0 0 1 27 87 8 8 0 0 0 0 5 96 96 0 0 1 5 32c0 22-8 44-21 60a80 80 0 0 1-29 22 8 8 0 0 0-4 4 108 108 0 0 1-18 30 3 3 0 0 0 2 4h49a48 48 0 0 0 48-44l34-324h3a16 16 0 0 0 16-17c0-8-8-15-16-15M109 320a24 24 0 0 1 17 7l15 16a4 4 0 0 0 6 0l15-16a24 24 0 0 1 17-7h197a8 8 0 0 0 8-8 40 40 0 0 0-32-39c-1-30-13-55-36-72-20-16-48-25-80-25h-72c-68 0-114 39-116 97a40 40 0 0 0-32 39 8 8 0 0 0 8 8Zm77 32a8 8 0 0 0-6 2l-22 22a20 20 0 0 1-28 0l-22-22a8 8 0 0 0-6-2H33a16 16 0 0 0-16 13 65 65 0 0 0-1 11c0 31 21 56 47 56 3 15 9 29 17 39 14 16 33 25 54 25h132c21 0 40-9 54-25 8-10 14-24 17-39 26 0 47-25 47-56a65 65 0 0 0-1-11 16 16 0 0 0-16-13Z"/></svg>
+                    
+                </div>
+                <div id="today-button" class="action-button">
+                    <svg width="28" height="28" viewBox="0 0 512 512"><path d="M416 64h-16V48.45c0-8.61-6.62-16-15.23-16.43A16 16 0 0 0 368 48v16H144V48.45c0-8.61-6.62-16-15.23-16.43A16 16 0 0 0 112 48v16H96a64 64 0 0 0-64 64v12a4 4 0 0 0 4 4h440a4 4 0 0 0 4-4v-12a64 64 0 0 0-64-64m61 112H35a3 3 0 0 0-3 3v237a64 64 0 0 0 64 64h320a64 64 0 0 0 64-64V179a3 3 0 0 0-3-3M224 307.43A28.57 28.57 0 0 1 195.43 336h-70.86A28.57 28.57 0 0 1 96 307.43v-70.86A28.57 28.57 0 0 1 124.57 208h70.86A28.57 28.57 0 0 1 224 236.57Z"/></svg>
+                    
+                </div>
+            </div>
+        </header>
+        <main>
+            <nav class="week-navigator">
+                <div class="day-selector" data-day="0">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="1">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="2">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="3">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="4">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="5">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+                <div class="day-selector" data-day="6">
+                    <span id="day-name">??</span>
+                    <span id="day-number">??</span>
+                </div>
+            </nav>
+            <div class="schedule-container">
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">09:00</div>
+                        <div id="class-date-between">09:45</div>
+                        <div id="class-date-end">10:30</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">10:45</div>
+                        <div id="class-date-between">11:30</div>
+                        <div id="class-date-end">12:15</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dinner-line-container">
+                    <span class="dinner-text">Обед</span>
+                    <hr class="dinner-line">
+                </div>
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">13:15</div>
+                        <div id="class-date-between">14:00</div>
+                        <div id="class-date-end">14:45</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">15:00</div>
+                        <div id="class-date-between">15:45</div>
+                        <div id="class-date-end">16:30</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">16:45</div>
+                        <div id="class-date-between">17:30</div>
+                        <div id="class-date-end">18:15</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="class-container">
+                    <div class="class-date">
+                        <div id="class-date-start">18:30</div>
+                        <div id="class-date-between">19:15</div>
+                        <div id="class-date-end">20:00</div>
+                    </div>
+                    <div id="class-info-container">
+                        <div class="pillar"></div>
+                        <div class="class-info">
+                            <span id="class-title"></span>
+                            <span id="class-lecturer"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script type="module">const e={КП:"#c6c6c6","Л/ЛР":"#bae9fa","Л/П":"#a0e5fe",ЛАБ:"#a8aefd",ЛЕК:"#c0ff99","П/ЛР":"#afe7fc",ПР:"#7de3ff",ПЭКЗ:"#ffdf89",СЕМ:"#ffe9ad"},t=["вс","пн","вт","ср","чт","пт","сб"],n=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"],a=document.querySelectorAll(".day-selector"),l=document.querySelectorAll(".class-container"),r=document.querySelector(".dinner-line-container"),o=document.getElementById("disable-dinner-button"),c=document.getElementById("title"),s=document.getElementById("today-button"),i=new Date,d=new Date;let u=!0;function y(){r.style.display=localStorage.getItem("dinnerLineState")??"none"}function f(){c.textContent=`${n[i.getMonth()]} ${i.getFullYear()}`}y(),f(),(async()=>{let[n,r,c,,]=await Promise.all([fetch("https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/schedule"),fetch("https://schedule.npi-tu.ru/api/v1/class-types"),fetch("https://schedule.npi-tu.ru/api/v1/class-intervals")]),[g,m,p,,]=await Promise.all([n.json(),r.json(),c.json()]);async function S(n){f(),y();let r=new Date(n);r.setHours(0,0,0,0);let o=Array.from({length:7},(e,t)=>{let a=new Date(n);return a.setDate(n.getDate()+t-3),a}),c=g.classes.filter(e=>e.day==r.getDay()&&e.dates.find(e=>e===n.toLocaleDateString("en-CA")));a.forEach((e,n)=>{let a=e.querySelector("#day-name"),l=e.querySelector("#day-number"),c=o[n];a.textContent=t[c.getDay()],l.textContent=c.getDate(),c.getDate()==r.getDate()&&l.classList.add("selected")}),l.forEach((t,a)=>{let l=c.find(e=>e.class==a+1),r=t.querySelector("#class-date-start"),o=t.querySelector("#class-date-between"),s=t.querySelector("#class-date-end"),i=t.querySelector("#class-info-container"),d=t.querySelector(".pillar"),u=t.querySelector(".class-info"),y=u.querySelector("#class-title"),f=u.querySelector("#class-lecturer"),g=p[a+1].start,S=p[a+1].end;r.textContent=g;let[h,D]=g.split(":").map(Number),[C,q]=S.split(":").map(Number),x=(60*h+D+(60*C+q))/2,b=Math.floor(x/60),E=Math.floor(x%60);if(o.textContent=`${b.toString().padStart(2,"0")}:${E.toString().padStart(2,"0")}`,s.textContent=S,!l?.dates?.find?.(e=>e===n.toLocaleDateString("en-CA"))){y.textContent="",f.textContent="",i.style.border="none",i.style.opacity="0";return}y.textContent=l.discipline.replace(/ \(\d+ час\)/,""),f.textContent=l.lecturer,i.style.border="#d1d1d1 1px solid",i.style.backgroundColor=m[l.type].color,d.style.backgroundColor=e[l.type],i.style.opacity="1"})}o.addEventListener("click",()=>{u&&(u=!1,setTimeout(()=>u=!0,25),localStorage.setItem("dinnerLineState","flex"!==localStorage.getItem("dinnerLineState")?"flex":"none"),y())}),s.addEventListener("click",()=>{u&&(u=!1,setTimeout(()=>u=!0,25),i.setTime(d.getTime()),S(i))}),a.forEach((e,t)=>{e.addEventListener("click",()=>{u&&(u=!1,setTimeout(()=>u=!0,25),i.setDate(i.getDate()+t-3),S(i))})}),S(i)})();</script>
+    
+
+</body></html>

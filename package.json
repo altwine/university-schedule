@@ -1,15 +1,15 @@
 {
   "name": "university-schedule",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "rsbuild build",
-    "dev": "rsbuild dev --open",
-    "preview": "rsbuild preview"
-  },
   "devDependencies": {
-    "@rsbuild/core": "^1.3.1",
-    "typescript": "^5.8.2"
-  }
+    "html-minifier": "^4.0.0",
+    "parcel": "^2.15.4"
+  },
+  "private": true,
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build && html-minifier ./dist/index.html -o ./dist/index.html"
+  },
+  "source": "src/index.html",
+  "type": "module"
 }
