@@ -9,12 +9,14 @@ const YEAR_MONTH = [
     'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
 ];
 
+const MAIN_CONTENT = document.querySelector('.main-content');
 const DAY_SELECTOR_ELEMENTS = document.querySelectorAll('.day-selector');
 const CLASS_CONTAINER_ELEMENTS = document.querySelectorAll('.class-container');
 const DINNER_LINE_CONTAINER_ELEMENT = document.querySelector('.dinner-line-container');
 const DISABLE_DINNER_BUTTON = document.getElementById('disable-dinner-button');
 const TITLE_ELEMENT = document.getElementById('title');
 const TODAY_BUTTON_ELEMENT = document.getElementById('today-button');
+const COLOR_BADGE_ELEMENTS = Array.from(document.querySelectorAll('.color-badge'));
 
 const changeableDate = new Date();
 const realDate = new Date();
@@ -50,6 +52,34 @@ updateTitle();
         classIntervalsResponse.json(),
         /* finalsScheduleResponse.json(), */
     ]);
+
+    const uniqueClassTypes = new Set();
+    schedule.classes.forEach(uniqueClassType => uniqueClassTypes.add(uniqueClassType.type))
+
+    Array.from(uniqueClassTypes).forEach((uniqueClassType, uniqueClassTypeIndex) => {
+        const colorBadgeElement = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
+        colorBadgeElement.textContent = classTypes[uniqueClassType].name;
+        colorBadgeElement.style.backgroundColor = classTypes[uniqueClassType].color;
+    });
+
+    let touchstartX = null;
+    let touchendX = null;
+
+    MAIN_CONTENT.addEventListener('touchstart', (event) => {
+        touchstartX = event.changedTouches[0].screenX;
+    });
+
+    MAIN_CONTENT.addEventListener('touchend', (event) => {
+        touchendX = event.changedTouches[0].screenX;
+        if (Math.abs(touchstartX - touchendX) <= 60) return;
+        if (touchendX < touchstartX) {
+            changeableDate.setDate(changeableDate.getDate() + 1);
+        }
+        if (touchendX > touchstartX) {
+            changeableDate.setDate(changeableDate.getDate() - 1);
+        }
+        renderSchedule(changeableDate);
+    });
 
     DISABLE_DINNER_BUTTON.addEventListener('click', () => {
         if (!_clickAllowed) return
@@ -130,7 +160,7 @@ updateTitle();
                 return;
             };
             const disciplineRenamed = currentClass.discipline.replace(/ \(\d+ час\)/, '');
-            classInfoTitleEl.textContent = disciplineRenamed;
+            classInfoTitleEl.textContent = `${currentClass.auditorium} ${disciplineRenamed}`;
             classInfoLecturerEl.textContent = currentClass.lecturer;
             classInfoContainerEl.style.border = '#d1d1d1 1px solid';
             classInfoContainerEl.style.backgroundColor = classTypes[currentClass.type].color;
