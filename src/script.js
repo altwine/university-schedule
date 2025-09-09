@@ -1,7 +1,13 @@
-const CLASS_TYPES_SECONDARY_COLORS = {
-	'КП': '#c6c6c6', 'Л/ЛР': '#bae9fa', 'Л/П': '#a0e5fe',
-	'ЛАБ': '#a8aefd', 'ЛЕК': '#c0ff99', 'П/ЛР': '#afe7fc',
-	'ПР': '#7de3ff', 'ПЭКЗ': '#ffdf89', 'СЕМ': '#ffe9ad',
+const CLASS_TYPES = {
+  'КП': { name: 'Курсовой проект', color: '#FFFFFF', second: '#C6C6C6', },
+  'Л/ЛР': { name: 'Лекция/лабораторная', color: '#F0FBFF', second: '#BAE9FA', },
+  'Л/П': { name: 'Лекция/практика', color: '#F0FBFF', second: '#A0E5FE', },
+  'ЛАБ': { name: 'Лабораторная работа', color: '#E7E8F8', second: '#A8AEFD', },
+  'ЛЕК': { name: 'Лекция', color: '#E5FFD5', second: '#C0FF99', },
+  'П/ЛР': { name: 'Практика/лабораторная', color: '#F0FBFF', second: '#AFE7FC', },
+  'ПР': { name: 'Практическое занятие', color: '#D5F6FF', second: '#7DE3FF', },
+  'ПЭКЗ': { name: 'Переэкзаменовка', color: '#FFFBF0', second: '#FFDF89', },
+  'СЕМ': { name: 'Семинар', color: '#FFFBF0', second: '#FFE9AD', },
 };
 const WEEK_DAYS = [ 'вс', 'пн', 'вт', 'ср','чт', 'пт', 'сб', ];
 const YEAR_MONTH = [
@@ -36,20 +42,16 @@ updateTitle();
 
 ;(async () => {
     const [
-        scheduleResponse, classTypesResponse, classIntervalsResponse, /* finalsScheduleResponse */,
+        scheduleResponse, /* finalsScheduleResponse */,
     ] = await Promise.all([
         fetch('https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/schedule'),
-        fetch('https://schedule.npi-tu.ru/api/v1/class-types'),
-        fetch('https://schedule.npi-tu.ru/api/v1/class-intervals'),
         /* fetch('https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/finals-schedule'), */
     ]);
     
     const [
-        schedule, classTypes, classIntervals, /*finalsSchedule,*/,
+        schedule, /*finalsSchedule,*/,
     ] = await Promise.all([
         scheduleResponse.json(),
-        classTypesResponse.json(),
-        classIntervalsResponse.json(),
         /* finalsScheduleResponse.json(), */
     ]);
 
@@ -58,8 +60,8 @@ updateTitle();
 
     Array.from(uniqueClassTypes).forEach((uniqueClassType, uniqueClassTypeIndex) => {
         const colorBadgeElement = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
-        colorBadgeElement.textContent = classTypes[uniqueClassType].name;
-        colorBadgeElement.style.backgroundColor = classTypes[uniqueClassType].color;
+        colorBadgeElement.textContent = CLASS_TYPES[uniqueClassType].name;
+        colorBadgeElement.style.backgroundColor = CLASS_TYPES[uniqueClassType].color;
     });
 
     let touchstartX = null;
@@ -134,24 +136,11 @@ updateTitle();
 
         CLASS_CONTAINER_ELEMENTS.forEach((classEl, classIndex) => {
             const currentClass = currentClasses.find(c => c.class == classIndex + 1);
-            const classDateStartEl = classEl.querySelector('#class-date-start');
-            const classDateBetween = classEl.querySelector('#class-date-between');
-            const classDateEndEl = classEl.querySelector('#class-date-end');
             const classInfoContainerEl = classEl.querySelector('#class-info-container');
             const classInfoLineEl = classEl.querySelector('.pillar');
             const classInfoEl = classEl.querySelector('.class-info');
             const classInfoTitleEl = classInfoEl.querySelector('#class-title');
             const classInfoLecturerEl = classInfoEl.querySelector('#class-lecturer');
-            const classStartDate = classIntervals[classIndex + 1].start;
-            const classEndDate = classIntervals[classIndex + 1].end;
-            classDateStartEl.textContent = classStartDate;
-            const [startHours, startMinutes] = classStartDate.split(':').map(Number);
-            const [endHours, endMinutes] = classEndDate.split(':').map(Number);
-            const averageTotalMinutes = ((startHours * 60 + startMinutes) + (endHours * 60 + endMinutes)) / 2;
-            const averageHours = Math.floor(averageTotalMinutes / 60);
-            const averageMinutes = Math.floor(averageTotalMinutes % 60);
-            classDateBetween.textContent = `${averageHours.toString().padStart(2, '0')}:${averageMinutes.toString().padStart(2, '0')}`;
-            classDateEndEl.textContent = classEndDate;
             if (!currentClass?.dates?.find?.(date => date === nowDate.toLocaleDateString('en-CA'))) {
                 classInfoTitleEl.textContent = '';
                 classInfoLecturerEl.textContent = '';
@@ -163,8 +152,8 @@ updateTitle();
             classInfoTitleEl.textContent = `${currentClass.auditorium} ${disciplineRenamed}`;
             classInfoLecturerEl.textContent = currentClass.lecturer;
             classInfoContainerEl.style.border = '#d1d1d1 1px solid';
-            classInfoContainerEl.style.backgroundColor = classTypes[currentClass.type].color;
-            classInfoLineEl.style.backgroundColor = CLASS_TYPES_SECONDARY_COLORS[currentClass.type];
+            classInfoContainerEl.style.backgroundColor = CLASS_TYPES[currentClass.type].color;
+            classInfoLineEl.style.backgroundColor = CLASS_TYPES[currentClass.type].second;
             classInfoContainerEl.style.opacity = '1';
         });
     }
