@@ -2,13 +2,13 @@
   "name": "university-schedule",
   "version": "1.0.0",
   "devDependencies": {
-    "html-minifier": "^4.0.0",
+    "html-minifier-terser": "^7.2.0",
     "parcel": "^2.15.4"
   },
   "private": true,
   "scripts": {
     "start": "parcel",
-    "build": "parcel build && html-minifier ./dist/index.html -o ./dist/index.html"
+    "build": "parcel build --no-optimize && html-minifier-terser ./dist/index.html --minify-css true --minify-js true --collapse-whitespace --remove-comments -o ./dist/index.html"
   },
   "source": "src/index.html",
   "type": "module"

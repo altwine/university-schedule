@@ -9,7 +9,9 @@ const CLASS_TYPES = {
   'ПЭКЗ': { name: 'Переэкзаменовка', color: '#FFFBF0', second: '#FFDF89', },
   'СЕМ': { name: 'Семинар', color: '#FFFBF0', second: '#FFE9AD', },
 };
-const WEEK_DAYS = [ 'вс', 'пн', 'вт', 'ср','чт', 'пт', 'сб', ];
+const WEEK_DAYS = [
+    'вс', 'пн', 'вт', 'ср','чт', 'пт', 'сб',
+];
 const YEAR_MONTH = [
     'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
     'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь',
@@ -20,11 +22,13 @@ const MAIN_CONTENT = document.querySelector('.main-content');
 const DAY_SELECTOR_ELEMENTS = document.querySelectorAll('.day-selector');
 const CLASS_CONTAINER_ELEMENTS = document.querySelectorAll('.class-container');
 const DINNER_LINE_CONTAINER_ELEMENT = document.querySelector('.dinner-line-container');
-const DISABLE_DINNER_BUTTON = document.getElementById('disable-dinner-button');
+const DISABLE_DINNER_ELEMENT = document.getElementById('disable-dinner-button');
 const TITLE_ELEMENT = document.getElementById('title');
 const TODAY_BUTTON_ELEMENT = document.getElementById('today-button');
-const SELECT_GROUP_BUTTON = document.getElementById('select-group-button');
+const SELECT_GROUP_ELEMENT = document.getElementById('select-group-button');
 const COLOR_BADGE_ELEMENTS = Array.from(document.querySelectorAll('.color-badge'));
+const SEARCH_FIELD_ELEMENT = document.querySelector('.search-field');
+const GROUP_SELECTOR_ELEMENT = document.querySelector('.group-selector');
 
 const groupFetch = fetch('https://schedule.npi-tu.ru/api/v1/groups/-');
 
@@ -55,7 +59,9 @@ function updateLabels(schedule) {
         colorBadgeEl.style.backgroundColor = 'transparent';
     });
 
-    Array.from(uniqueClassTypes).forEach((uniqueClassType, uniqueClassTypeIndex) => {
+    const uniqueClassTypesFiltered = Array.from(uniqueClassTypes).sort((uct1, uct2) => CLASS_TYPES[uct1].name.length < CLASS_TYPES[uct2].name.length);
+
+    uniqueClassTypesFiltered.forEach((uniqueClassType, uniqueClassTypeIndex) => {
         const colorBadgeElement = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
         colorBadgeElement.textContent = CLASS_TYPES[uniqueClassType].name;
         colorBadgeElement.style.backgroundColor = CLASS_TYPES[uniqueClassType].color;
@@ -86,7 +92,7 @@ updateTitle();
         renderSchedule(changeableDate, currentScheduleUrl);
     });
 
-    DISABLE_DINNER_BUTTON.addEventListener('click', () => {
+    DISABLE_DINNER_ELEMENT.addEventListener('click', () => {
         if (!isClickAllowed) return;
         isClickAllowed = false;
         setTimeout(() => isClickAllowed = true, 25);
@@ -103,13 +109,11 @@ updateTitle();
     });
 
     let groups = null;
-    SELECT_GROUP_BUTTON.addEventListener('click', async () => {
+    SELECT_GROUP_ELEMENT.addEventListener('click', async () => {
         if (!isClickAllowed) return;
         isClickAllowed = false;
         setTimeout(() => isClickAllowed = true, 25);
-        const searchField = document.querySelector('.search-field');
-        const groupSelector = document.querySelector('.group-selector');
-        const cc = groupSelector.classList;
+        const cc = GROUP_SELECTOR_ELEMENT.classList;
         if (!groups) {
             const groupsResponse = await groupFetch;
             groups = await groupsResponse.json();
@@ -124,9 +128,9 @@ updateTitle();
                 groupKeyBtn.textContent = groupKey;
                 groupSelectorBody.appendChild(groupKeyBtn);
             });
-            searchField.addEventListener('input', () => {
+            SEARCH_FIELD_ELEMENT.addEventListener('input', () => {
                 while (groupSelectorBody.firstChild) groupSelectorBody.firstChild.remove();
-                groupsKeys.filter(key => key.toLowerCase().includes(searchField.value.toLowerCase())).forEach((groupKey) => {
+                groupsKeys.filter(key => key.toLowerCase().includes(SEARCH_FIELD_ELEMENT.value.toLowerCase())).forEach((groupKey) => {
                     const groupKeyBtn = document.createElement('div');
                     groupKeyBtn.className = 'group-selector-element';
                     groupKeyBtn.dataset['faculty'] = groups[groupKey].faculty;
@@ -144,7 +148,7 @@ updateTitle();
                 SEARCH_PARAMS.set('year', year);
                 SEARCH_PARAMS.set('group', group);
                 window.history.pushState('', '', SEARCH_PARAMS);
-                searchField.value = '';
+                SEARCH_FIELD_ELEMENT.value = '';
                 groupSelectorBody.scrollTop = 0;
                 if(!cc.contains('hidden')) cc.add('hidden');
             });
