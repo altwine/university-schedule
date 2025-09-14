@@ -108,6 +108,7 @@ main {
 
 .class-date {
     display: flex;
+    width: 40px;
     flex-direction: column;
     color: #656565;
     justify-content: space-between;
@@ -176,3 +177,53 @@ main {
     border-radius: 4px;
 }
 
+.group-selector {
+    align-self: center;
+    bottom: 8px;
+    position: absolute;
+    border: #acacac 1px solid;
+    border-radius: 8px;
+    padding: 6px;
+    width: 96%;
+    max-height: 80%;
+    height: 80%;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    user-select: none;
+    background-color: #fff;
+    box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.1);
+    animation: slide-out 0.2s normal;
+}
+
+@keyframes slide-out {
+    from { bottom: -100vh; };
+    to { bottom: 8px; };
+}
+
+.group-selector-body {
+    overflow-y: scroll;
+    height: 97%;
+}
+
+.group-selector.hidden {
+    display: none;
+    animation: slide-out 0.2s reverse;
+}
+
+.group-selector-element {
+    display: flex;
+    padding: 8px;
+}
+
+.group-selector-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+}
+
+.search-field {
+    flex: 1;
+}
