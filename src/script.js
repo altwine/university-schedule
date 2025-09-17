@@ -147,7 +147,7 @@ updateTitle();
                 SEARCH_PARAMS.set('faculty', faculty);
                 SEARCH_PARAMS.set('year', year);
                 SEARCH_PARAMS.set('group', group);
-                window.history.pushState('', '', SEARCH_PARAMS);
+                window.history.pushState('', '', `${window.location.origin}?${SEARCH_PARAMS.toString()}`);
                 SEARCH_FIELD_ELEMENT.value = '';
                 groupSelectorBody.scrollTop = 0;
                 if(!cc.contains('hidden')) cc.add('hidden');
