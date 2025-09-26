@@ -184,6 +184,40 @@ main {
     border-radius: 4px;
 }
 
+.skeletal {
+    background: linear-gradient(90deg, #c8c8c8 25%, #e0e0e0 50%, #c8c8c8 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    from { background-position: -200% 0; };
+    to { background-position: 200% 0; };
+}
+
+.color-badge.skeletal:nth-child(1) {
+    width: 182px;
+    height: 33px;
+}
+
+.color-badge.skeletal:nth-child(2) {
+    width: 177px;
+    height: 33px;
+}
+
+.color-badge.skeletal:nth-child(3) {
+    width: 69px;
+    height: 33px;
+}
+
+#no-internet-notice {
+    display: none;
+    padding: 6px;
+    justify-content: center;
+    background-color: rgb(227, 230, 52);
+    user-select: none;
+}
+
 .group-selector {
     align-self: center;
     bottom: 8px;

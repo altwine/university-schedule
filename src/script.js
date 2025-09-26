@@ -29,6 +29,7 @@ const SELECT_GROUP_ELEMENT = document.getElementById('select-group-button');
 const COLOR_BADGE_ELEMENTS = Array.from(document.querySelectorAll('.color-badge'));
 const SEARCH_FIELD_ELEMENT = document.querySelector('.search-field');
 const GROUP_SELECTOR_ELEMENT = document.querySelector('.group-selector');
+const NO_INTERNET_NOTICE_ELEMENT = document.getElementById('no-internet-notice');
 
 const groupFetch = fetch('https://schedule.npi-tu.ru/api/v1/groups/-');
 
@@ -54,17 +55,20 @@ function updateLabels(schedule) {
     const uniqueClassTypes = new Set();
     schedule.classes.forEach(uniqueClassType => uniqueClassTypes.add(uniqueClassType.type))
 
-    COLOR_BADGE_ELEMENTS.forEach((colorBadgeEl) => {
+    COLOR_BADGE_ELEMENTS.forEach((colorBadgeEl, colorBadgeIdx) => {
         colorBadgeEl.textContent = '';
         colorBadgeEl.style.backgroundColor = 'transparent';
+        if (colorBadgeIdx < 3) {
+            colorBadgeEl.classList.remove('skeletal');
+        }
     });
 
     const uniqueClassTypesFiltered = Array.from(uniqueClassTypes).sort((uct1, uct2) => CLASS_TYPES[uct1].name.length < CLASS_TYPES[uct2].name.length);
 
     uniqueClassTypesFiltered.forEach((uniqueClassType, uniqueClassTypeIndex) => {
-        const colorBadgeElement = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
-        colorBadgeElement.textContent = CLASS_TYPES[uniqueClassType].name;
-        colorBadgeElement.style.backgroundColor = CLASS_TYPES[uniqueClassType].color;
+        const colorBadgeEl = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
+        colorBadgeEl.textContent = CLASS_TYPES[uniqueClassType].name;
+        colorBadgeEl.style.backgroundColor = CLASS_TYPES[uniqueClassType].color;
     });
 }
 
@@ -143,7 +147,9 @@ updateTitle();
             document.addEventListener('click', (event) => {
                 if (event?.target?.className !== 'group-selector-element') return;
                 const { faculty, year, group } = event.target.dataset;
-                renderSchedule(changeableDate, `https://schedule.npi-tu.ru/api/v2/faculties/${faculty}/years/${year}/groups/${group}/schedule`);
+                const newScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${faculty}/years/${year}/groups/${group}/schedule`;
+                localStorage.removeItem('cachedSchedule');
+                renderSchedule(changeableDate, newScheduleUrl);
                 SEARCH_PARAMS.set('faculty', faculty);
                 SEARCH_PARAMS.set('year', year);
                 SEARCH_PARAMS.set('group', group);
@@ -173,18 +179,31 @@ updateTitle();
         updateDinnerLine();
 
         if (!lastSchedule || lastScheduleUrl !== scheduleUrl) {
-            currentScheduleUrl = scheduleUrl;
-            lastScheduleUrl = currentScheduleUrl;
-            const [
-                scheduleResponse,
-            ] = await Promise.all([
-                fetch(scheduleUrl),
-            ]);
-            lastSchedule = await scheduleResponse.json();
-            lastSchedule.classes = lastSchedule.classes.filter(c => c.type !== '-');
+            try {
+                currentScheduleUrl = scheduleUrl;
+                lastScheduleUrl = currentScheduleUrl;
+                const [
+                    scheduleResponse, // Тут будут scheduleFinals
+                ] = await Promise.all([
+                    fetch(scheduleUrl),
+                ]);
+                lastSchedule = await scheduleResponse.json();
+                lastSchedule.classes = lastSchedule.classes.filter(c => c.type !== '-');
+                localStorage.setItem('cachedSchedule', JSON.stringify(lastSchedule));
+                // localStorage.setItem('cachedScheduleTimestamp', (+realDate).toString()); // Может добавлю устаревание
+            } catch (e) {
+                NO_INTERNET_NOTICE_ELEMENT.style.display = 'flex';
+                const cachedSchedule = localStorage.getItem('cachedSchedule');
+                if (cachedSchedule) {
+                    lastSchedule = JSON.parse(cachedSchedule);
+                } else {
+                    return;
+                }
+            }
         }
 
         updateLabels(lastSchedule);
+        document.title = `Расписание ${lastSchedule.group}`;
         const today = new Date(nowDate);
         today.setHours(0, 0, 0, 0);
 

@@ -3,21 +3,31 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <title>Расписание 090304-РПИа-о24</title>
-        <link rel="preconnect" href="https://schedule.npi-tu.ru/" crossorigin />
+        <title>Расписание</title>
         <link rel="dns-prefetch" href="https://schedule.npi-tu.ru/" />
-        <link rel="preload" href="https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/schedule" as="fetch" crossorigin />
-        <!-- <link rel="preload" href="https://schedule.npi-tu.ru/api/v2/faculties/2/years/2/groups/РПИа/finals-schedule" as="fetch" crossorigin /> -->
+        <link rel="preconnect" href="https://schedule.npi-tu.ru/" crossorigin />
+        <link rel="preload" href="https://schedule.npi-tu.ru/api/v1/groups/-" as="fetch" crossorigin />
         <link rel="canonical" href="https://altwine.github.io/university-schedule/" />
         <meta name="theme-color" content="#000000">
-        <meta name="description" content="Удобное расписание занятий для группы 090304-РПИа-о24. Для личного использования.">
-        <meta property="og:title" content="Расписание 090304-РПИа-о24">
+        <meta name="description" content="Удобное расписание занятий. Для личного использования.">
+        <meta property="og:title" content="Расписание">
         <meta property="og:description" content="Удобное расписание занятий. Для личного использования.">
         <meta property="og:type" content="website">
         <meta property="og:url" content="https://altwine.github.io/university-schedule/">
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "Расписание",
+                "description": "Удобное расписание занятий"
+            }
+        </script>
         <style>@import "./style.css";</style>
     </head>
     <body>
+        <div id="no-internet-notice">
+            <span>Нет интернета, сайт работает в офлайн-режиме!</span>
+        </div>
         <header class="header">
             <div class="menu-container">
                 <h1 id="title" class="title">Загрузка...</h1>
@@ -159,9 +169,9 @@
                 </div>
             </div>
             <div id="colors-container">
-                <div class="color-badge"></div>
-                <div class="color-badge"></div>
-                <div class="color-badge"></div>
+                <div class="color-badge skeletal"></div>
+                <div class="color-badge skeletal"></div>
+                <div class="color-badge skeletal"></div>
                 <div class="color-badge"></div>
                 <div class="color-badge"></div>
                 <div class="color-badge"></div>
@@ -176,7 +186,7 @@
                 <!-- cant get inlining work without additional deps -->
                 <input class="search-field" placeholder="Название или номер группы..." type="text">
             </search>
-            <hr class="divider-line"></hr>
+            <hr class="divider-line">
             <div class="group-selector-body"></div>
         </div>
         <script type="module">import "./script.js"</script>
