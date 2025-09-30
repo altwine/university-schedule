@@ -10,7 +10,7 @@
   "private": true,
   "scripts": {
     "start": "parcel",
-    "build": "parcel build --no-optimize && html-minifier-terser ./dist/index.html --minify-css true --minify-js true --collapse-whitespace --remove-comments -o ./dist/index.html"
+    "build": "parcel build --no-source-maps && html-minifier-terser ./dist/index.html --minify-css true --minify-js true --collapse-whitespace --remove-comments -o ./dist/index.html"
   },
   "source": "src/index.html",
   "type": "module"

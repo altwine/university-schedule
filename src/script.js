@@ -75,6 +75,10 @@ function updateLabels(schedule) {
 updateDinnerLine();
 updateTitle();
 
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register(new URL('sw.js', import.meta.url))
+}
+
 ;(async () => {
     let lastScheduleUrl = null;
     let lastSchedule = null;
