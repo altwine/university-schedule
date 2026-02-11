@@ -20,7 +20,16 @@ resultHtml = await minify(resultHtml, {
 	collapseWhitespace: true,
 	removeComments: true,
 	minifyCSS: true,
-	minifyJS: true,
+	minifyJS: {
+		compress: {
+			unsafe: true,
+			unsafe_comps: true,
+			toplevel: true,
+		},
+		mangle: {
+			toplevel: true,
+		},
+	},
 	useShortDoctype: true,
 	removeRedundantAttributes: true,
 	removeScriptTypeAttributes: true,
