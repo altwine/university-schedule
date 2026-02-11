@@ -44,11 +44,13 @@ const groupFetch = fetch("https://schedule.npi-tu.ru/api/v1/groups/-");
 const changeableDate = new Date();
 const realDate = new Date();
 
-const INITIAL_YEAR = SEARCH_PARAMS.get("year") ?? "2";
-const INITIAL_FACULTY = SEARCH_PARAMS.get("faculty") ?? "2";
-const INITIAL_GROUP = SEARCH_PARAMS.get("group") ?? "РПИа";
+const notesData = JSON.parse(localStorage.getItem("notes") ?? "{}");
 
-let currentScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${INITIAL_FACULTY}/years/${INITIAL_YEAR}/groups/${INITIAL_GROUP}/schedule`;
+let initialYear = SEARCH_PARAMS.get("year") ?? "2";
+let initialFaculty = SEARCH_PARAMS.get("faculty") ?? "2";
+let initialGroup = SEARCH_PARAMS.get("group") ?? "РПИа";
+
+let currentScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${initialFaculty}/years/${initialYear}/groups/${initialGroup}/schedule`;
 let isClickAllowed = true;
 
 function updateDinnerLine() {
@@ -158,6 +160,9 @@ updateTitle();
 			document.addEventListener("click", (event) => {
 				if (event?.target?.className !== "group-selector-element") return;
 				const { faculty, year, group } = event.target.dataset;
+				initialFaculty = faculty;
+				initialYear = year;
+				initialGroup = group;
 				const newScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${faculty}/years/${year}/groups/${group}/schedule`;
 				localStorage.removeItem("cachedSchedule");
 				renderSchedule(changeableDate, newScheduleUrl);
@@ -184,6 +189,24 @@ updateTitle();
 			setTimeout(() => (isClickAllowed = true), 25);
 			changeableDate.setDate(changeableDate.getDate() + dayIndex - 3);
 			renderSchedule(changeableDate, currentScheduleUrl);
+		});
+	});
+
+	CLASS_CONTAINER_ELEMENTS.forEach((classEl) => {
+		const classInfoContainerEl = classEl.querySelector("#class-info-container");
+		classInfoContainerEl.addEventListener("click", () => {
+			const hash = classInfoContainerEl.dataset.hash;
+			if (hash == "") return;
+			currentNote = notesData?.[hash];
+			if (!currentNote) {
+				newNote = prompt("Новая заметка");
+				if (newNote) {
+					notesData[hash] = newNote;
+					localStorage.setItem("notes", JSON.stringify(notesData));
+				}
+				return;
+			}
+			alert(currentNote);
 		});
 	});
 
@@ -251,8 +274,11 @@ updateTitle();
 				classInfoLecturerEl.textContent = "";
 				classInfoContainerEl.style.border = "none";
 				classInfoContainerEl.style.opacity = "0";
+				classInfoContainerEl.dataset.hash = "";
 				return;
 			}
+			classInfoContainerEl.dataset.hash =
+				initialFaculty + initialGroup + initialYear + nowDate.toLocaleDateString("en-CA") + classIndex;
 			const disciplineRenamed = currentClass.discipline.replace(/ \(\d+ час\)/, "");
 			classInfoTitleEl.textContent = `${currentClass.auditorium} ${disciplineRenamed}`;
 			classInfoLecturerEl.textContent = currentClass.lecturer;
