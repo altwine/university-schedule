@@ -26,7 +26,7 @@ const YEAR_MONTH = [
 ];
 
 const SEARCH_PARAMS = new URLSearchParams(window.location.search);
-const MAIN_CONTENT = document.querySelector(".main-content");
+const MAIN_CONTENT = document.querySelector("main");
 const DAY_SELECTOR_ELEMENTS = document.querySelectorAll(".day-selector");
 const CLASS_CONTAINER_ELEMENTS = document.querySelectorAll(".class-container");
 const DINNER_LINE_CONTAINER_ELEMENT = document.querySelector(".dinner-line-container");
