@@ -1,17 +1,8 @@
 {
-  "name": "university-schedule",
-  "version": "1.0.0",
-  "devDependencies": {
-    "@parcel/packager-raw-url": "^2.15.4",
-    "@parcel/transformer-jsonld": "^2.15.4",
-    "html-minifier-terser": "^7.2.0",
-    "parcel": "^2.15.4"
-  },
-  "private": true,
-  "scripts": {
-    "start": "parcel",
-    "build": "parcel build --no-source-maps && html-minifier-terser ./dist/index.html --minify-css true --minify-js true --collapse-whitespace --remove-comments -o ./dist/index.html"
-  },
-  "source": "src/index.html",
-  "type": "module"
+	"name": "university-schedule",
+	"version": "1.0.0",
+	"devDependencies": {
+		"html-minifier-terser": "^7.2.0"
+	},
+	"private": true
 }
