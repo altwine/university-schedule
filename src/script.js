@@ -88,6 +88,12 @@ function updateLabels(schedule) {
 	});
 }
 
+function preventDoubleClick() {
+	if (!isClickAllowed) return;
+	isClickAllowed = false;
+	setTimeout(() => (isClickAllowed = true), 25);
+}
+
 updateDinnerLine();
 updateTitle();
 
@@ -112,26 +118,20 @@ updateTitle();
 	});
 
 	DISABLE_DINNER_ELEMENT.addEventListener("click", () => {
-		if (!isClickAllowed) return;
-		isClickAllowed = false;
-		setTimeout(() => (isClickAllowed = true), 25);
+		preventDoubleClick();
 		localStorage.setItem("dinnerLineState", localStorage.getItem("dinnerLineState") !== "flex" ? "flex" : "none");
 		updateDinnerLine();
 	});
 
 	TODAY_BUTTON_ELEMENT.addEventListener("click", () => {
-		if (!isClickAllowed) return;
-		isClickAllowed = false;
-		setTimeout(() => (isClickAllowed = true), 25);
+		preventDoubleClick();
 		changeableDate.setTime(realDate.getTime());
 		renderSchedule(changeableDate, currentScheduleUrl);
 	});
 
 	let groups = null;
 	SELECT_GROUP_ELEMENT.addEventListener("click", async () => {
-		if (!isClickAllowed) return;
-		isClickAllowed = false;
-		setTimeout(() => (isClickAllowed = true), 25);
+		preventDoubleClick();
 		const cl = NOTES_EDITOR_ELEMENT.classList;
 		if (!cl.contains("hidden")) {
 			cl.add("hidden");
@@ -192,18 +192,14 @@ updateTitle();
 
 	DAY_SELECTOR_ELEMENTS.forEach((daySelector, dayIndex) => {
 		daySelector.addEventListener("click", () => {
-			if (!isClickAllowed) return;
-			isClickAllowed = false;
-			setTimeout(() => (isClickAllowed = true), 25);
+			preventDoubleClick();
 			changeableDate.setDate(changeableDate.getDate() + dayIndex - 3);
 			renderSchedule(changeableDate, currentScheduleUrl);
 		});
 	});
 
 	CLOSE_NOTES_EDITOR.addEventListener("click", async () => {
-		if (!isClickAllowed) return;
-		isClickAllowed = false;
-		setTimeout(() => (isClickAllowed = true), 25);
+		preventDoubleClick();
 		NOTES_EDITOR_ELEMENT.classList.add("hidden");
 		notesData[latestClassHash] = NOTE_CONTENT_ELEMENT.value;
 		localStorage.setItem("notes", JSON.stringify(notesData));
