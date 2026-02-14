@@ -34,10 +34,14 @@ const DISABLE_DINNER_ELEMENT = document.getElementById("disable-dinner-button");
 const TITLE_ELEMENT = document.getElementById("title");
 const TODAY_BUTTON_ELEMENT = document.getElementById("today-button");
 const SELECT_GROUP_ELEMENT = document.getElementById("select-group-button");
+const CLOSE_NOTES_EDITOR = document.getElementById("close-notes-editor");
 const COLOR_BADGE_ELEMENTS = Array.from(document.querySelectorAll(".color-badge"));
 const SEARCH_FIELD_ELEMENT = document.querySelector(".search-field");
 const GROUP_SELECTOR_ELEMENT = document.querySelector(".group-selector");
+const NOTES_EDITOR_ELEMENT = document.querySelector(".notes-editor");
 const NO_INTERNET_NOTICE_ELEMENT = document.getElementById("no-internet-notice");
+const NOTE_TITLE_ELEMENT = document.getElementById("note-title");
+const NOTE_CONTENT_ELEMENT = document.getElementById("note-content");
 
 const groupFetch = fetch("https://schedule.npi-tu.ru/api/v1/groups/-");
 
@@ -128,6 +132,10 @@ updateTitle();
 		if (!isClickAllowed) return;
 		isClickAllowed = false;
 		setTimeout(() => (isClickAllowed = true), 25);
+		const cl = NOTES_EDITOR_ELEMENT.classList;
+		if (!cl.contains("hidden")) {
+			cl.add("hidden");
+		}
 		const cc = GROUP_SELECTOR_ELEMENT.classList;
 		if (!groups) {
 			const groupsResponse = await groupFetch;
@@ -192,21 +200,34 @@ updateTitle();
 		});
 	});
 
+	CLOSE_NOTES_EDITOR.addEventListener("click", async () => {
+		if (!isClickAllowed) return;
+		isClickAllowed = false;
+		setTimeout(() => (isClickAllowed = true), 25);
+		NOTES_EDITOR_ELEMENT.classList.add("hidden");
+		notesData[latestClassHash] = NOTE_CONTENT_ELEMENT.value;
+		localStorage.setItem("notes", JSON.stringify(notesData));
+	});
+
+	let latestClassHash;
 	CLASS_CONTAINER_ELEMENTS.forEach((classEl) => {
 		const classInfoContainerEl = classEl.querySelector("#class-info-container");
 		classInfoContainerEl.addEventListener("click", () => {
 			const hash = classInfoContainerEl.dataset.hash;
 			if (hash == "") return;
-			currentNote = notesData?.[hash];
-			if (!currentNote) {
-				newNote = prompt("Новая заметка");
-				if (newNote) {
-					notesData[hash] = newNote;
-					localStorage.setItem("notes", JSON.stringify(notesData));
-				}
-				return;
+			latestClassHash = hash;
+			currentNote = notesData?.[hash] ?? "";
+			const cc = GROUP_SELECTOR_ELEMENT.classList;
+			if (!cc.contains("hidden")) {
+				cc.add("hidden");
 			}
-			alert(currentNote);
+			const cl = NOTES_EDITOR_ELEMENT.classList;
+			cl.remove("hidden");
+			const classTitleEl = classInfoContainerEl.querySelector("#class-title");
+			const classTitleSplitted = classTitleEl.textContent.split(" ");
+			classTitleSplitted.shift();
+			NOTE_TITLE_ELEMENT.textContent = classTitleSplitted.join(" ");
+			NOTE_CONTENT_ELEMENT.value = currentNote;
 		});
 	});
 

@@ -1,5 +1,16 @@
 * {
 	box-sizing: border-box;
+	font-weight: 600;
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		"Segoe UI",
+		Roboto,
+		Oxygen,
+		Ubuntu,
+		Cantarell,
+		sans-serif;
 }
 
 html,
@@ -14,17 +25,6 @@ body {
 	flex-direction: column;
 	background-color: #fff;
 	overflow: hidden;
-	font-weight: 600;
-	font-family:
-		system-ui,
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Oxygen,
-		Ubuntu,
-		Cantarell,
-		sans-serif;
 }
 
 header {
@@ -239,7 +239,8 @@ nav {
 	user-select: none;
 }
 
-.group-selector {
+.group-selector,
+.notes-editor {
 	align-self: center;
 	bottom: 8px;
 	position: absolute;
@@ -265,12 +266,14 @@ nav {
 	}
 }
 
-.group-selector-body {
+.group-selector-body,
+.notes-editor-body {
 	overflow-y: scroll;
 	height: 97%;
+	flex: 1;
 }
 
-.group-selector.hidden {
+.hidden {
 	display: none;
 }
 
@@ -280,16 +283,39 @@ nav {
 	cursor: pointer;
 }
 
-.group-selector-search {
+.group-selector-search,
+.notes-editor-header {
 	display: flex;
 	align-items: center;
 	padding: 0 0 0 14px;
 	gap: 8px;
 }
 
-.search-field {
+.search-field,
+#note-title {
 	width: 100%;
 	height: 48px;
 	border: 0;
 	outline: 0;
+	margin: 0;
+}
+
+#note-title {
+	text-align: center;
+	align-content: center;
+}
+
+#note-content {
+	outline: none;
+	width: 100%;
+	height: 97%;
+	padding: 8px;
+	resize: none;
+	border: none;
+	display: flex;
+}
+
+#close-notes-editor {
+	cursor: pointer;
+	margin-right: 16px;
 }
