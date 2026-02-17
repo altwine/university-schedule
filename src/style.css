@@ -42,7 +42,6 @@ header {
 
 .emoji {
 	user-select: none;
-	filter: grayscale(1);
 	transform: scale(1.5);
 }
 
