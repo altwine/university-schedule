@@ -201,8 +201,9 @@ updateTitle();
 	CLOSE_NOTES_EDITOR.addEventListener("click", async () => {
 		preventDoubleClick();
 		NOTES_EDITOR_ELEMENT.classList.add("hidden");
-		notesData[latestClassHash] = NOTE_CONTENT_ELEMENT.value;
+		notesData[latestClassHash] = NOTE_CONTENT_ELEMENT.value.trim();
 		localStorage.setItem("notes", JSON.stringify(notesData));
+		renderSchedule(changeableDate, currentScheduleUrl);
 	});
 
 	let latestClassHash;
@@ -282,25 +283,36 @@ updateTitle();
 		CLASS_CONTAINER_ELEMENTS.forEach((classEl, classIndex) => {
 			const currentClass = currentClasses.find((c) => c.class == classIndex + 1);
 			const classInfoContainerEl = classEl.querySelector("#class-info-container");
-			const classInfoLineEl = classEl.querySelector(".pillar");
 			const classInfoEl = classEl.querySelector(".class-info");
 			const classInfoTitleEl = classInfoEl.querySelector("#class-title");
 			const classInfoLecturerEl = classInfoEl.querySelector("#class-lecturer");
+			const classInfoNotePreviewEl = classInfoEl.querySelector("#class-note-preview");
 			if (!currentClass?.dates?.find?.((date) => date === nowDate.toLocaleDateString("en-CA"))) {
 				classInfoTitleEl.textContent = "";
 				classInfoLecturerEl.textContent = "";
+				classInfoNotePreviewEl.textContent = "";
 				classInfoContainerEl.style.border = "none";
 				classInfoContainerEl.style.opacity = "0";
 				classInfoContainerEl.dataset.hash = "";
 				return;
 			}
-			classInfoContainerEl.dataset.hash =
+			const classHash =
 				initialFaculty + initialGroup + initialYear + nowDate.toLocaleDateString("en-CA") + classIndex;
+			classInfoContainerEl.dataset.hash = classHash;
+			let noteContent = notesData?.[classHash];
+			if (noteContent) {
+				noteContent = noteContent.slice(0, 24);
+				if (noteContent.length > 23) noteContent += "...";
+				classInfoNotePreviewEl.textContent = `Заметка: ${noteContent}`;
+			} else {
+				classInfoNotePreviewEl.textContent = "";
+			}
 			const disciplineRenamed = currentClass.discipline.replace(/ \(\d+ час\)/, "");
 			classInfoTitleEl.textContent = `${currentClass.auditorium} ${disciplineRenamed}`;
 			classInfoLecturerEl.textContent = currentClass.lecturer;
 			classInfoContainerEl.style.border = "#d1d1d1 1px solid";
 			classInfoContainerEl.style.backgroundColor = CLASS_TYPES[currentClass.type].color;
+			const classInfoLineEl = classEl.querySelector(".pillar");
 			classInfoLineEl.style.backgroundColor = CLASS_TYPES[currentClass.type].second;
 			classInfoContainerEl.style.opacity = "1";
 		});
