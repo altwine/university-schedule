@@ -66,25 +66,22 @@ function updateTitle() {
 }
 
 function updateLabels(schedule) {
-	const uniqueClassTypes = new Set();
-	schedule.classes.forEach((uniqueClassType) => uniqueClassTypes.add(uniqueClassType.type));
-
-	COLOR_BADGE_ELEMENTS.forEach((colorBadgeEl, colorBadgeIdx) => {
-		colorBadgeEl.textContent = "";
-		colorBadgeEl.style.backgroundColor = "transparent";
-		if (colorBadgeIdx < 3) {
-			colorBadgeEl.classList.remove("skeletal");
-		}
-	});
-
-	const uniqueClassTypesFiltered = Array.from(uniqueClassTypes).sort(
-		(uct1, uct2) => CLASS_TYPES[uct1].name.length < CLASS_TYPES[uct2].name.length,
+	const uniqueClassTypes = Array.from(new Set(schedule.classes.map((c) => c.type))).filter(
+		(type) => CLASS_TYPES?.[type],
 	);
 
-	uniqueClassTypesFiltered.forEach((uniqueClassType, uniqueClassTypeIndex) => {
-		const colorBadgeEl = COLOR_BADGE_ELEMENTS[uniqueClassTypeIndex];
-		colorBadgeEl.textContent = CLASS_TYPES[uniqueClassType].name;
-		colorBadgeEl.style.backgroundColor = CLASS_TYPES[uniqueClassType].color;
+	uniqueClassTypes.sort((a, b) => CLASS_TYPES[b].name.length - CLASS_TYPES[a].name.length);
+
+	COLOR_BADGE_ELEMENTS.forEach((badge, i) => {
+		const type = uniqueClassTypes[i];
+		if (type) {
+			badge.textContent = CLASS_TYPES[type].name;
+			badge.style.backgroundColor = CLASS_TYPES[type].color;
+		} else {
+			badge.textContent = "";
+			badge.style.backgroundColor = "transparent";
+		}
+		if (i < 3) badge.classList.remove("skeletal");
 	});
 }
 
@@ -187,7 +184,7 @@ updateTitle();
 				if (!cc.contains("hidden")) cc.add("hidden");
 			});
 		}
-		cc.contains("hidden") ? cc.remove("hidden") : cc.add("hidden");
+		cc.toggle("hidden");
 	});
 
 	DAY_SELECTOR_ELEMENTS.forEach((daySelector, dayIndex) => {
