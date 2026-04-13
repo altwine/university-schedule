@@ -1,16 +1,25 @@
+:root {
+	color-scheme: light dark;
+
+	--bg-body: light-dark(#fff, #0f1115);
+	--shadow-card: light-dark(rgba(34, 60, 80, 0.1), rgba(0, 0, 0, 0.35));
+	--border-default: light-dark(#acacac, #2a2a30);
+	--border-card: light-dark(#d1d1d1, #2a2a30);
+	--text-default: #0f1115;
+	--text-muted: #656565;
+	--bg-selected: light-dark(dodgerblue, #3b82f6);
+	--text-on-selected: light-dark(#ffffff, #ffffff);
+	--bg-red-line: light-dark(red, #ef4444);
+	--text-dim: light-dark(#888, #71717a);
+	--skeleton-base: light-dark(#c8c8c8, #27272a);
+	--skeleton-highlight: light-dark(#e0e0e0, #3f3f46);
+	--bg-notice: rgb(227, 230, 52);
+}
+
 * {
 	box-sizing: border-box;
-	font-weight: 600;
-	font-family:
-		system-ui,
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Oxygen,
-		Ubuntu,
-		Cantarell,
-		sans-serif;
+	font-weight: 500;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 html,
@@ -23,7 +32,7 @@ body {
 body {
 	display: flex;
 	flex-direction: column;
-	background-color: #fff;
+	background-color: var(--bg-body);
 	overflow: hidden;
 }
 
@@ -31,8 +40,8 @@ header {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 8px;
-	padding: 0 12px 0 12px;
-	box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.1);
+	padding: 0 10px 0 10px;
+	box-shadow: 0px 5px 10px 2px var(--shadow-card);
 }
 
 .menu-container {
@@ -47,21 +56,21 @@ header {
 
 .title {
 	margin: 0;
-	padding: 12px 0 12px 0;
-	font-size: 24px;
+	padding: 10px 0 10px 0;
+	font-size: 22px;
 	font-weight: 700;
 }
 
 .actions-container {
 	display: flex;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 }
 
 .action-button {
 	display: flex;
 	cursor: pointer;
-	border: #acacac 1px solid;
+	border: var(--border-default) 1px solid;
 	border-radius: 8px;
 	align-items: center;
 	justify-content: center;
@@ -94,7 +103,7 @@ nav {
 }
 
 #day-name {
-	color: #656565;
+	color: var(--text-muted);
 }
 
 #day-number {
@@ -104,8 +113,8 @@ nav {
 }
 
 #day-number.selected {
-	background-color: dodgerblue;
-	color: white;
+	background-color: var(--bg-selected);
+	color: var(--text-on-selected);
 }
 
 .schedule-container {
@@ -115,18 +124,17 @@ nav {
 }
 
 .class-container {
-	padding: 6px;
+	padding: 4px;
 	display: flex;
-	gap: 6px;
 	flex: 1;
 }
 
 .class-date {
 	display: flex;
-	width: 40px;
+	font-size: 14px;
 	flex-direction: column;
-	color: #656565;
-	justify-content: space-between;
+	color: var(--text-muted);
+	justify-content: space-around;
 	user-select: none;
 }
 
@@ -139,7 +147,7 @@ nav {
 }
 
 .dinner-line {
-	background-color: red;
+	background-color: var(--bg-red-line);
 	height: 2px;
 	border: 0;
 	margin: 0;
@@ -147,7 +155,7 @@ nav {
 }
 
 .divider-line {
-	background-color: #acacac;
+	background-color: var(--border-default);
 	width: 100%;
 	margin: 0;
 	border: 0;
@@ -155,14 +163,16 @@ nav {
 }
 
 .dinner-text {
-	color: #656565;
+	color: var(--text-muted);
 	font-size: 15px;
 }
 
 #class-info-container {
+	color: var(--text-default);
 	border-radius: 4px;
 	gap: 8px;
 	padding: 6px;
+	margin-left: 6px;
 	display: flex;
 	flex: 1;
 	width: 100%;
@@ -175,12 +185,12 @@ nav {
 }
 
 #class-lecturer {
-	color: #656565;
+	color: var(--text-muted);
 	font-size: 14px;
 }
 
 #class-note-preview {
-	color: #888;
+	color: var(--text-dim);
 	font-size: 14px;
 }
 
@@ -195,6 +205,7 @@ nav {
 	gap: 4px;
 	padding: 6px;
 	user-select: none;
+	color: var(--text-default);
 }
 
 .color-badge {
@@ -203,7 +214,12 @@ nav {
 }
 
 .skeletal {
-	background: linear-gradient(90deg, #c8c8c8 25%, #e0e0e0 50%, #c8c8c8 75%);
+	background: linear-gradient(
+		90deg,
+		var(--skeleton-base) 25%,
+		var(--skeleton-highlight) 50%,
+		var(--skeleton-base) 75%
+	);
 	background-size: 200% 100%;
 	animation: shimmer 1.5s infinite;
 }
@@ -236,7 +252,7 @@ nav {
 	display: none;
 	padding: 6px;
 	justify-content: center;
-	background-color: rgb(227, 230, 52);
+	background-color: var(--bg-notice);
 	user-select: none;
 }
 
@@ -245,7 +261,7 @@ nav {
 	align-self: center;
 	bottom: 8px;
 	position: absolute;
-	border: #acacac 1px solid;
+	border: var(--border-default) 1px solid;
 	border-radius: 8px;
 	width: 96%;
 	max-height: 80%;
@@ -253,8 +269,8 @@ nav {
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;
-	background-color: #fff;
-	box-shadow: 0px 5px 10px 2px rgba(34, 60, 80, 0.1);
+	background-color: var(--bg-body);
+	box-shadow: 0px 5px 10px 2px var(--shadow-card);
 	animation: slide-out 0.2s normal;
 }
 
@@ -294,6 +310,7 @@ nav {
 
 .search-field,
 #note-title {
+	background-color: transparent;
 	width: 100%;
 	height: 48px;
 	border: 0;

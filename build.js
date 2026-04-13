@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { minify } from "html-minifier-terser";
 
 const INLINE_PATTERN = /<!--inline-"(.*?)"-->/g;
@@ -39,4 +39,5 @@ resultHtml = await minify(resultHtml, {
 	removeOptionalTags: true,
 });
 
-writeFileSync("dist/index.html", resultHtml);
+mkdirSync("./dist", { recursive: true });
+writeFileSync("./dist/index.html", resultHtml);

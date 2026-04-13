@@ -26,11 +26,14 @@ const YEAR_MONTH = [
 ];
 
 const SEARCH_PARAMS = new URLSearchParams(window.location.search);
+const ROOT_ELEMENT_STYLE = document.documentElement.style;
+
 const MAIN_CONTENT = document.querySelector("main");
 const DAY_SELECTOR_ELEMENTS = document.querySelectorAll(".day-selector");
 const CLASS_CONTAINER_ELEMENTS = document.querySelectorAll(".class-container");
 const DINNER_LINE_CONTAINER_ELEMENT = document.querySelector(".dinner-line-container");
 const DISABLE_DINNER_ELEMENT = document.getElementById("disable-dinner-button");
+const CHANGE_THEME_ELEMENT = document.getElementById("change-theme-button");
 const TITLE_ELEMENT = document.getElementById("title");
 const TODAY_BUTTON_ELEMENT = document.getElementById("today-button");
 const SELECT_GROUP_ELEMENT = document.getElementById("select-group-button");
@@ -56,6 +59,18 @@ let initialGroup = SEARCH_PARAMS.get("group") ?? "РПИа";
 
 let currentScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${initialFaculty}/years/${initialYear}/groups/${initialGroup}/schedule`;
 let isClickAllowed = true;
+
+if (!localStorage.getItem("theme")) {
+	localStorage.setItem("theme", window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+	ROOT_ELEMENT_STYLE.colorScheme = "dark";
+	CHANGE_THEME_ELEMENT.textContent = "☀️";
+} else {
+	ROOT_ELEMENT_STYLE.colorScheme = "light";
+	CHANGE_THEME_ELEMENT.textContent = "🌙";
+}
 
 function updateDinnerLine() {
 	DINNER_LINE_CONTAINER_ELEMENT.style.display = localStorage.getItem("dinnerLineState") ?? "none";
@@ -124,6 +139,19 @@ updateTitle();
 		preventDoubleClick();
 		changeableDate.setTime(realDate.getTime());
 		renderSchedule(changeableDate, currentScheduleUrl);
+	});
+
+	CHANGE_THEME_ELEMENT.addEventListener("click", () => {
+		preventDoubleClick();
+		if (localStorage.getItem("theme") === "dark") {
+			localStorage.setItem("theme", "light");
+			ROOT_ELEMENT_STYLE.colorScheme = "light";
+			CHANGE_THEME_ELEMENT.textContent = "🌑";
+		} else {
+			localStorage.setItem("theme", "dark");
+			ROOT_ELEMENT_STYLE.colorScheme = "dark";
+			CHANGE_THEME_ELEMENT.textContent = "☀️";
+		}
 	});
 
 	let groups = null;
@@ -307,7 +335,7 @@ updateTitle();
 			const disciplineRenamed = currentClass.discipline.replace(/ \(\d+ час\)/, "");
 			classInfoTitleEl.textContent = `${currentClass.auditorium} ${disciplineRenamed}`;
 			classInfoLecturerEl.textContent = currentClass.lecturer;
-			classInfoContainerEl.style.border = "#d1d1d1 1px solid";
+			classInfoContainerEl.style.border = "var(--border-card) 1px solid";
 			classInfoContainerEl.style.backgroundColor = CLASS_TYPES[currentClass.type].color;
 			const classInfoLineEl = classEl.querySelector(".pillar");
 			classInfoLineEl.style.backgroundColor = CLASS_TYPES[currentClass.type].second;
