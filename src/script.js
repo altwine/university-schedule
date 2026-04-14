@@ -226,7 +226,13 @@ updateTitle();
 	CLOSE_NOTES_EDITOR.addEventListener("click", async () => {
 		preventDoubleClick();
 		NOTES_EDITOR_ELEMENT.classList.add("hidden");
-		notesData[latestClassHash] = NOTE_CONTENT_ELEMENT.value.trim();
+
+		const noteContent = NOTE_CONTENT_ELEMENT.value.trim();
+		if (noteContent === "") {
+			delete notesData[latestClassHash];
+		} else {
+			notesData[latestClassHash] = noteContent;
+		}
 		localStorage.setItem("notes", JSON.stringify(notesData));
 		renderSchedule(changeableDate, currentScheduleUrl);
 	});
@@ -240,9 +246,7 @@ updateTitle();
 			latestClassHash = hash;
 			currentNote = notesData?.[hash] ?? "";
 			const cc = GROUP_SELECTOR_ELEMENT.classList;
-			if (!cc.contains("hidden")) {
-				cc.add("hidden");
-			}
+			if (!cc.contains("hidden")) cc.add("hidden");
 			const cl = NOTES_EDITOR_ELEMENT.classList;
 			cl.remove("hidden");
 			const classTitleEl = classInfoContainerEl.querySelector("#class-title");
