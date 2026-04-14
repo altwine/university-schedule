@@ -51,7 +51,7 @@ const groupFetch = fetch("https://schedule.npi-tu.ru/api/v1/groups/-");
 const changeableDate = new Date();
 const realDate = new Date();
 
-const notesData = JSON.parse(localStorage.getItem("notes") ?? "{}");
+const notesData = JSON.parse(localStorage.notes ?? "{}");
 
 let initialYear = SEARCH_PARAMS.get("year") ?? "2";
 let initialFaculty = SEARCH_PARAMS.get("faculty") ?? "2";
@@ -60,11 +60,11 @@ let initialGroup = SEARCH_PARAMS.get("group") ?? "РПИа";
 let currentScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${initialFaculty}/years/${initialYear}/groups/${initialGroup}/schedule`;
 let isClickAllowed = true;
 
-if (!localStorage.getItem("theme")) {
-	localStorage.setItem("theme", window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+if (!localStorage.theme) {
+	localStorage.theme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-if (localStorage.getItem("theme") === "dark") {
+if (localStorage.theme === "dark") {
 	ROOT_ELEMENT_STYLE.colorScheme = "dark";
 	CHANGE_THEME_ELEMENT.textContent = "☀️";
 } else {
@@ -73,7 +73,7 @@ if (localStorage.getItem("theme") === "dark") {
 }
 
 function updateDinnerLine() {
-	DINNER_LINE_CONTAINER_ELEMENT.style.display = localStorage.getItem("dinnerLineState") ?? "none";
+	DINNER_LINE_CONTAINER_ELEMENT.style.display = localStorage.dinnerLineState ?? "none";
 }
 
 function updateTitle() {
@@ -131,7 +131,7 @@ updateTitle();
 
 	DISABLE_DINNER_ELEMENT.addEventListener("click", () => {
 		preventDoubleClick();
-		localStorage.setItem("dinnerLineState", localStorage.getItem("dinnerLineState") !== "flex" ? "flex" : "none");
+		localStorage.dinnerLineState = localStorage.dinnerLineState !== "flex" ? "flex" : "none";
 		updateDinnerLine();
 	});
 
@@ -143,12 +143,12 @@ updateTitle();
 
 	CHANGE_THEME_ELEMENT.addEventListener("click", () => {
 		preventDoubleClick();
-		if (localStorage.getItem("theme") === "dark") {
-			localStorage.setItem("theme", "light");
+		if (localStorage.theme === "dark") {
+			localStorage.theme = "light";
 			ROOT_ELEMENT_STYLE.colorScheme = "light";
 			CHANGE_THEME_ELEMENT.textContent = "🌙";
 		} else {
-			localStorage.setItem("theme", "dark");
+			localStorage.theme = "dark";
 			ROOT_ELEMENT_STYLE.colorScheme = "dark";
 			CHANGE_THEME_ELEMENT.textContent = "☀️";
 		}
@@ -170,9 +170,9 @@ updateTitle();
 			groupsKeys.forEach((groupKey) => {
 				const groupKeyBtn = document.createElement("div");
 				groupKeyBtn.className = "group-selector-element";
-				groupKeyBtn.dataset["faculty"] = groups[groupKey].faculty;
-				groupKeyBtn.dataset["year"] = groups[groupKey].year;
-				groupKeyBtn.dataset["group"] = groups[groupKey].group;
+				groupKeyBtn.dataset.faculty = groups[groupKey].faculty;
+				groupKeyBtn.dataset.year = groups[groupKey].year;
+				groupKeyBtn.dataset.group = groups[groupKey].group;
 				groupKeyBtn.textContent = groupKey;
 				groupSelectorBody.appendChild(groupKeyBtn);
 			});
@@ -183,9 +183,9 @@ updateTitle();
 					.forEach((groupKey) => {
 						const groupKeyBtn = document.createElement("div");
 						groupKeyBtn.className = "group-selector-element";
-						groupKeyBtn.dataset["faculty"] = groups[groupKey].faculty;
-						groupKeyBtn.dataset["year"] = groups[groupKey].year;
-						groupKeyBtn.dataset["group"] = groups[groupKey].group;
+						groupKeyBtn.dataset.faculty = groups[groupKey].faculty;
+						groupKeyBtn.dataset.year = groups[groupKey].year;
+						groupKeyBtn.dataset.group = groups[groupKey].group;
 						groupKeyBtn.textContent = groupKey;
 						groupSelectorBody.appendChild(groupKeyBtn);
 					});
@@ -197,7 +197,7 @@ updateTitle();
 				initialYear = year;
 				initialGroup = group;
 				const newScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${faculty}/years/${year}/groups/${group}/schedule`;
-				localStorage.removeItem("cachedSchedule");
+				delete localStorage.cachedSchedule;
 				renderSchedule(changeableDate, newScheduleUrl);
 				SEARCH_PARAMS.set("faculty", faculty);
 				SEARCH_PARAMS.set("year", year);
@@ -233,7 +233,7 @@ updateTitle();
 		} else {
 			notesData[latestClassHash] = noteContent;
 		}
-		localStorage.setItem("notes", JSON.stringify(notesData));
+		localStorage.notes = JSON.stringify(notesData);
 		renderSchedule(changeableDate, currentScheduleUrl);
 	});
 
@@ -272,11 +272,11 @@ updateTitle();
 				] = await Promise.all([fetch(scheduleUrl)]);
 				lastSchedule = await scheduleResponse.json();
 				lastSchedule.classes = lastSchedule.classes.filter((c) => c.type !== "-");
-				localStorage.setItem("cachedSchedule", JSON.stringify(lastSchedule));
-				// localStorage.setItem('cachedScheduleTimestamp', (+realDate).toString()); // Может добавлю устаревание
+				localStorage.cachedSchedule = JSON.stringify(lastSchedule);
+				// localStorage.cachedScheduleTimestamp = (+realDate).toString(); // Может добавлю устаревание
 			} catch (e) {
 				NO_INTERNET_NOTICE_ELEMENT.style.display = "flex";
-				const cachedSchedule = localStorage.getItem("cachedSchedule");
+				const cachedSchedule = localStorage.cachedSchedule;
 				if (cachedSchedule) {
 					lastSchedule = JSON.parse(cachedSchedule);
 				} else {
@@ -297,7 +297,7 @@ updateTitle();
 		});
 
 		const currentClasses = lastSchedule.classes.filter(
-			(c) => c.day == today.getDay() && c.dates.find((date) => date === nowDate.toLocaleDateString("en-CA")),
+			(c) => c.day == today.getDay() && c.dates.includes(nowDate.toLocaleDateString("en-CA")),
 		);
 
 		DAY_SELECTOR_ELEMENTS.forEach((daySelector, dayIndex) => {
@@ -316,7 +316,7 @@ updateTitle();
 			const classInfoTitleEl = classInfoEl.querySelector("#class-title");
 			const classInfoLecturerEl = classInfoEl.querySelector("#class-lecturer");
 			const classInfoNotePreviewEl = classInfoEl.querySelector("#class-note-preview");
-			if (!currentClass?.dates?.find?.((date) => date === nowDate.toLocaleDateString("en-CA"))) {
+			if (!currentClass) {
 				classInfoTitleEl.textContent = "";
 				classInfoLecturerEl.textContent = "";
 				classInfoNotePreviewEl.textContent = "";

@@ -66,6 +66,7 @@ header {
 	display: flex;
 	cursor: pointer;
 	user-select: none;
+	font-size: 20px;
 	border: var(--border-default) 1px solid;
 	border-radius: 8px;
 	align-items: center;
