@@ -1,13 +1,13 @@
 const CLASS_TYPES = {
-	КП: { name: "Курсовой проект", color: "#FFFFFF", second: "#C6C6C6" },
-	"Л/ЛР": { name: "Лекция/лабораторная", color: "#F0FBFF", second: "#BAE9FA" },
-	"Л/П": { name: "Лекция/практика", color: "#F0FBFF", second: "#A0E5FE" },
-	ЛАБ: { name: "Лабораторная работа", color: "#E7E8F8", second: "#A8AEFD" },
-	ЛЕК: { name: "Лекция", color: "#E5FFD5", second: "#C0FF99" },
-	"П/ЛР": { name: "Практика/лабораторная", color: "#F0FBFF", second: "#AFE7FC" },
-	ПР: { name: "Практическое занятие", color: "#D5F6FF", second: "#7DE3FF" },
-	ПЭКЗ: { name: "Переэкзаменовка", color: "#FFFBF0", second: "#FFDF89" },
-	СЕМ: { name: "Семинар", color: "#FFFBF0", second: "#FFE9AD" },
+	КП: { name: "Курсовой проект", color: "#FFF", second: "#CCC" },
+	"Л/ЛР": { name: "Лекция/лабораторная", color: "#EFF", second: "#BEF" },
+	"Л/П": { name: "Лекция/практика", color: "#EFF", second: "#9DF" },
+	ЛАБ: { name: "Лабораторная работа", color: "#EEF", second: "#AAF" },
+	ЛЕК: { name: "Лекция", color: "#DFD", second: "#BF9" },
+	"П/ЛР": { name: "Практика/лабораторная", color: "#EFF", second: "#AEF" },
+	ПР: { name: "Практическое занятие", color: "#DEF", second: "#7DF" },
+	ПЭКЗ: { name: "Переэкзаменовка", color: "#FFE", second: "#FD8" },
+	СЕМ: { name: "Семинар", color: "#FFE", second: "#FEA" },
 };
 const WEEK_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
 const YEAR_MONTH = [
