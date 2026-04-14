@@ -235,17 +235,14 @@ nav {
 
 .color-badge.skeletal:nth-child(1) {
 	width: 182px;
-	height: 33px;
 }
 
 .color-badge.skeletal:nth-child(2) {
 	width: 177px;
-	height: 33px;
 }
 
 .color-badge.skeletal:nth-child(3) {
 	width: 69px;
-	height: 33px;
 }
 
 #no-internet-notice {
