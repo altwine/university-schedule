@@ -49,11 +49,6 @@ header {
 	gap: 4px;
 }
 
-.emoji {
-	user-select: none;
-	transform: scale(1.5);
-}
-
 .title {
 	margin: 0;
 	padding: 10px 0 10px 0;
@@ -70,6 +65,7 @@ header {
 .action-button {
 	display: flex;
 	cursor: pointer;
+	user-select: none;
 	border: var(--border-default) 1px solid;
 	border-radius: 8px;
 	align-items: center;
@@ -250,6 +246,11 @@ nav {
 	padding: 6px;
 	justify-content: center;
 	background-color: var(--bg-notice);
+	user-select: none;
+}
+
+#close-notes-editor,
+#search-field-icon {
 	user-select: none;
 }
 

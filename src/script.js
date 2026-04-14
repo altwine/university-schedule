@@ -69,7 +69,7 @@ if (localStorage.getItem("theme") === "dark") {
 	CHANGE_THEME_ELEMENT.textContent = "☀️";
 } else {
 	ROOT_ELEMENT_STYLE.colorScheme = "light";
-	CHANGE_THEME_ELEMENT.textContent = "🌙";
+	// CHANGE_THEME_ELEMENT.textContent = "🌙"; // по умолчанию в разметке стоит луна
 }
 
 function updateDinnerLine() {
