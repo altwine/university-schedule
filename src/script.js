@@ -129,6 +129,13 @@ updateTitle();
 		renderSchedule(changeableDate, currentScheduleUrl);
 	});
 
+	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+		const theme = e.matches ? "dark" : "light";
+		localStorage.theme = theme;
+		ROOT_ELEMENT_STYLE.colorScheme = theme;
+		CHANGE_THEME_ELEMENT.textContent = theme === "dark" ? "☀️" : "🌙";
+	});
+
 	DISABLE_DINNER_ELEMENT.addEventListener("click", () => {
 		preventDoubleClick();
 		localStorage.dinnerLineState = localStorage.dinnerLineState !== "flex" ? "flex" : "none";
