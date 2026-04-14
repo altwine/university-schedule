@@ -146,7 +146,7 @@ updateTitle();
 		if (localStorage.getItem("theme") === "dark") {
 			localStorage.setItem("theme", "light");
 			ROOT_ELEMENT_STYLE.colorScheme = "light";
-			CHANGE_THEME_ELEMENT.textContent = "🌑";
+			CHANGE_THEME_ELEMENT.textContent = "🌙";
 		} else {
 			localStorage.setItem("theme", "dark");
 			ROOT_ELEMENT_STYLE.colorScheme = "dark";
