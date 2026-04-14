@@ -40,7 +40,7 @@ header {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 8px;
-	padding: 0 10px 0 10px;
+	padding: 0 10px;
 	box-shadow: 0px 5px 10px 2px var(--shadow-card);
 }
 
@@ -51,7 +51,7 @@ header {
 
 .title {
 	margin: 0;
-	padding: 10px 0 10px 0;
+	padding: 10px 0;
 	font-size: 22px;
 	font-weight: 700;
 }
@@ -79,7 +79,6 @@ main {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
-	height: min-content;
 }
 
 nav {
@@ -95,7 +94,7 @@ nav {
 	flex-direction: column;
 	cursor: pointer;
 	gap: 4px;
-	padding: 2px 0 2px 0;
+	padding: 2px 0;
 	user-select: none;
 }
 
@@ -106,7 +105,7 @@ nav {
 #day-number {
 	border-radius: 8px;
 	font-weight: bold;
-	padding: 10px 16px 10px 16px;
+	padding: 10px 16px;
 }
 
 #day-number.selected {
@@ -140,7 +139,7 @@ nav {
 	align-items: center;
 	user-select: none;
 	gap: 8px;
-	padding: 4px 6px 4px 6px;
+	padding: 4px 6px;
 }
 
 .dinner-line {
@@ -303,7 +302,7 @@ nav {
 .notes-editor-header {
 	display: flex;
 	align-items: center;
-	padding: 0 0 0 14px;
+	padding-left: 14px;
 	gap: 8px;
 }
 
@@ -329,7 +328,6 @@ nav {
 	padding: 8px;
 	resize: none;
 	border: none;
-	display: flex;
 }
 
 #close-notes-editor {

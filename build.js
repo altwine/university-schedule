@@ -37,6 +37,10 @@ resultHtml = await minify(resultHtml, {
 	processConditionalComments: true,
 	removeEmptyAttributes: true,
 	removeOptionalTags: true,
+	sortClassName: true,
+	sortAttributes: true,
+	processScripts: ["application/ld+json"],
+	removeAttributeQuotes: true,
 });
 
 mkdirSync("./dist", { recursive: true });

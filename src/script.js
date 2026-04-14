@@ -32,11 +32,9 @@ const MAIN_CONTENT = document.querySelector("main");
 const DAY_SELECTOR_ELEMENTS = document.querySelectorAll(".day-selector");
 const CLASS_CONTAINER_ELEMENTS = document.querySelectorAll(".class-container");
 const DINNER_LINE_CONTAINER_ELEMENT = document.querySelector(".dinner-line-container");
-const DISABLE_DINNER_ELEMENT = document.getElementById("disable-dinner-button");
-const CHANGE_THEME_ELEMENT = document.getElementById("change-theme-button");
+const [DISABLE_DINNER_ELEMENT, CHANGE_THEME_ELEMENT, TODAY_BUTTON_ELEMENT, SELECT_GROUP_ELEMENT] =
+	document.querySelectorAll(".action-button");
 const TITLE_ELEMENT = document.getElementById("title");
-const TODAY_BUTTON_ELEMENT = document.getElementById("today-button");
-const SELECT_GROUP_ELEMENT = document.getElementById("select-group-button");
 const CLOSE_NOTES_EDITOR = document.getElementById("close-notes-editor");
 const COLOR_BADGE_ELEMENTS = Array.from(document.querySelectorAll(".color-badge"));
 const SEARCH_FIELD_ELEMENT = document.querySelector(".search-field");
