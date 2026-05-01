@@ -264,6 +264,7 @@ nav {
 	width: 96%;
 	max-height: 80%;
 	height: 80%;
+	z-index: 9;
 	overflow-y: hidden;
 	display: flex;
 	flex-direction: column;

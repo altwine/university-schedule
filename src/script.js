@@ -8,6 +8,9 @@ const CLASS_TYPES = {
 	ПР: { name: "Практическое занятие", color: "#DEF", second: "#7DF" },
 	ПЭКЗ: { name: "Переэкзаменовка", color: "#FFE", second: "#FD8" },
 	СЕМ: { name: "Семинар", color: "#FFE", second: "#FEA" },
+	ЭКЗ: { name: "Экзамен", color: "#FCC", second: "#F99" },
+	ЗАЧ: { name: "Зачёт", color: "#FDC", second: "#FBA" },
+	ЗАЧО: { name: "Зачёт с оценкой", color: "#FCD", second: "#FAB" },
 };
 const WEEK_DAYS = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
 const YEAR_MONTH = [
@@ -24,6 +27,14 @@ const YEAR_MONTH = [
 	"Ноябрь",
 	"Декабрь",
 ];
+const TIME_CLASS_MAP = {
+	"09:00": 1,
+	"10:45": 2,
+	"13:15": 3,
+	"15:00": 4,
+	"16:45": 5,
+	"18:30": 6,
+};
 
 const SEARCH_PARAMS = new URLSearchParams(window.location.search);
 const ROOT_ELEMENT_STYLE = document.documentElement.style;
@@ -47,7 +58,6 @@ const NOTE_CONTENT_ELEMENT = document.getElementById("note-content");
 const groupFetch = fetch("https://schedule.npi-tu.ru/api/v1/groups/-");
 
 const changeableDate = new Date();
-const realDate = new Date();
 
 const notesData = JSON.parse(localStorage.notes ?? "{}");
 
@@ -55,7 +65,11 @@ let initialYear = SEARCH_PARAMS.get("year") ?? "2";
 let initialFaculty = SEARCH_PARAMS.get("faculty") ?? "2";
 let initialGroup = SEARCH_PARAMS.get("group") ?? "РПИа";
 
-let currentScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${initialFaculty}/years/${initialYear}/groups/${initialGroup}/schedule`;
+let currentScheduleState = {
+	year: initialYear,
+	group: initialGroup,
+	faculty: initialFaculty,
+};
 let isClickAllowed = true;
 
 if (!localStorage.theme) {
@@ -90,9 +104,11 @@ function updateLabels(schedule) {
 		if (type) {
 			badge.textContent = CLASS_TYPES[type].name;
 			badge.style.backgroundColor = CLASS_TYPES[type].color;
+			badge.style.display = "unset";
 		} else {
 			badge.textContent = "";
 			badge.style.backgroundColor = "transparent";
+			badge.style.display = "none";
 		}
 		if (i < 3) badge.classList.remove("skeletal");
 	});
@@ -108,7 +124,7 @@ updateDinnerLine();
 updateTitle();
 
 (async () => {
-	let lastScheduleUrl = null;
+	let lastScheduleState = { year: null, group: null, faculty: null };
 	let lastSchedule = null;
 
 	let touchstartX = null;
@@ -124,7 +140,7 @@ updateTitle();
 		} else if (touchendX > touchstartX) {
 			changeableDate.setDate(changeableDate.getDate() - 1);
 		}
-		renderSchedule(changeableDate, currentScheduleUrl);
+		renderSchedule(changeableDate, currentScheduleState);
 	});
 
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
@@ -142,8 +158,8 @@ updateTitle();
 
 	TODAY_BUTTON_ELEMENT.addEventListener("click", () => {
 		preventDoubleClick();
-		changeableDate.setTime(realDate.getTime());
-		renderSchedule(changeableDate, currentScheduleUrl);
+		changeableDate.setTime(new Date().getTime());
+		renderSchedule(changeableDate, currentScheduleState);
 	});
 
 	CHANGE_THEME_ELEMENT.addEventListener("click", () => {
@@ -201,9 +217,8 @@ updateTitle();
 				initialFaculty = faculty;
 				initialYear = year;
 				initialGroup = group;
-				const newScheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${faculty}/years/${year}/groups/${group}/schedule`;
 				delete localStorage.cachedSchedule;
-				renderSchedule(changeableDate, newScheduleUrl);
+				renderSchedule(changeableDate, event.target.dataset);
 				SEARCH_PARAMS.set("faculty", faculty);
 				SEARCH_PARAMS.set("year", year);
 				SEARCH_PARAMS.set("group", group);
@@ -224,7 +239,7 @@ updateTitle();
 		daySelector.addEventListener("click", () => {
 			preventDoubleClick();
 			changeableDate.setDate(changeableDate.getDate() + dayIndex - 3);
-			renderSchedule(changeableDate, currentScheduleUrl);
+			renderSchedule(changeableDate, currentScheduleState);
 		});
 	});
 
@@ -239,7 +254,7 @@ updateTitle();
 			notesData[latestClassHash] = noteContent;
 		}
 		localStorage.notes = JSON.stringify(notesData);
-		renderSchedule(changeableDate, currentScheduleUrl);
+		renderSchedule(changeableDate, currentScheduleState);
 	});
 
 	let latestClassHash;
@@ -249,7 +264,6 @@ updateTitle();
 			const hash = classInfoContainerEl.dataset.hash;
 			if (hash == "") return;
 			latestClassHash = hash;
-			currentNote = notesData?.[hash] ?? "";
 			const cc = GROUP_SELECTOR_ELEMENT.classList;
 			if (!cc.contains("hidden")) cc.add("hidden");
 			const cl = NOTES_EDITOR_ELEMENT.classList;
@@ -258,27 +272,53 @@ updateTitle();
 			const classTitleSplitted = classTitleEl.textContent.split(" ");
 			classTitleSplitted.shift();
 			NOTE_TITLE_ELEMENT.textContent = classTitleSplitted.join(" ");
-			NOTE_CONTENT_ELEMENT.value = currentNote;
+			NOTE_CONTENT_ELEMENT.value = notesData?.[hash] ?? "";
 		});
 	});
 
-	renderSchedule(changeableDate, currentScheduleUrl);
+	renderSchedule(changeableDate, currentScheduleState);
 
-	async function renderSchedule(nowDate, scheduleUrl) {
+	async function renderSchedule(nowDate, scheduleState) {
 		updateTitle();
 
-		if (!lastSchedule || lastScheduleUrl !== scheduleUrl) {
+		if (
+			!lastSchedule ||
+			currentScheduleState.year !== scheduleState.year ||
+			currentScheduleState.group !== scheduleState.group ||
+			currentScheduleState.faculty !== scheduleState.faculty
+		) {
 			try {
-				currentScheduleUrl = scheduleUrl;
-				lastScheduleUrl = currentScheduleUrl;
-				const [
-					scheduleResponse, // Тут будут scheduleFinals
-				] = await Promise.all([fetch(scheduleUrl)]);
+				currentScheduleState.year = scheduleState.year;
+				currentScheduleState.group = scheduleState.group;
+				currentScheduleState.faculty = scheduleState.faculty;
+				lastScheduleState.year = currentScheduleState.year;
+				lastScheduleState.group = currentScheduleState.group;
+				lastScheduleState.faculty = currentScheduleState.faculty;
+				const scheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${currentScheduleState.faculty}/years/${currentScheduleState.year}/groups/${currentScheduleState.group}/schedule`;
+				const finalsUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${currentScheduleState.faculty}/years/${currentScheduleState.year}/groups/${currentScheduleState.group}/finals-schedule`;
+				const [scheduleResponse, scheduleFinals] = await Promise.all([fetch(scheduleUrl), fetch(finalsUrl)]);
 				lastSchedule = await scheduleResponse.json();
 				lastSchedule.classes = lastSchedule.classes.filter((c) => c.type !== "-");
+				let finals = await scheduleFinals.json();
+				finals = finals.map((exam) => {
+					const containers = Array.from(document.querySelectorAll(".class-container"));
+					const timeStartContainer = containers.findIndex((c) => c.innerHTML.includes(exam.start));
+					const timeEndContainer = containers.findIndex((c) => c.innerHTML.includes(exam.end));
+					const h = getComputedStyle(containers[0]).height.split("px")[0];
+					const mul = Math.min(Math.max(timeEndContainer - timeStartContainer + 1, 1), 6);
+					exam.tileSize = h * mul - 8 - 4;
+					exam.dates = [exam.date];
+					exam.class = TIME_CLASS_MAP[exam.start];
+					return exam;
+				});
+				for (const final of finals) {
+					lastSchedule.classes.push(final);
+				}
 				localStorage.cachedSchedule = JSON.stringify(lastSchedule);
 				// localStorage.cachedScheduleTimestamp = (+realDate).toString(); // Может добавлю устаревание
+				NO_INTERNET_NOTICE_ELEMENT.style.display = "none";
 			} catch (e) {
+				console.log(e);
 				NO_INTERNET_NOTICE_ELEMENT.style.display = "flex";
 				const cachedSchedule = localStorage.cachedSchedule;
 				if (cachedSchedule) {
@@ -326,6 +366,11 @@ updateTitle();
 				classInfoContainerEl.style.border = "none";
 				classInfoContainerEl.style.opacity = "0";
 				classInfoContainerEl.dataset.hash = "";
+				classInfoContainerEl.style.position = "unset";
+				classInfoContainerEl.style.height = "unset";
+				classInfoContainerEl.style.width = "unset";
+				classInfoContainerEl.style.right = "unset";
+				classInfoContainerEl.style.zIndex = "unset";
 				return;
 			}
 			const classHash = initialFaculty + initialGroup + initialYear + nowDateFormatted + classIndex;
@@ -346,6 +391,21 @@ updateTitle();
 			const classInfoLineEl = classEl.querySelector(".pillar");
 			classInfoLineEl.style.backgroundColor = CLASS_TYPES[currentClass.type].second;
 			classInfoContainerEl.style.opacity = "1";
+
+			if (currentClass.tileSize) {
+				const prevWidth = getComputedStyle(classInfoContainerEl).width;
+				classInfoContainerEl.style.position = "absolute";
+				classInfoContainerEl.style.height = `${currentClass.tileSize}px`;
+				classInfoContainerEl.style.width = prevWidth;
+				classInfoContainerEl.style.right = "4px";
+				classInfoContainerEl.style.zIndex = 1;
+			} else {
+				classInfoContainerEl.style.position = "unset";
+				classInfoContainerEl.style.height = "unset";
+				classInfoContainerEl.style.width = "unset";
+				classInfoContainerEl.style.right = "unset";
+				classInfoContainerEl.style.zIndex = "unset";
+			}
 		});
 	}
 })();

@@ -3,13 +3,7 @@ import { minify } from "html-minifier-terser";
 
 const INLINE_PATTERN = /<!--inline-"(.*?)"-->/g;
 
-let resultHtml = `
-	<!doctype html>
-	<html lang="ru">
-		<head><!--inline-"src/head.html"--></head>
-		<body><!--inline-"src/body.html"--></body>
-	</html>
-`;
+let resultHtml = readFileSync("./src/index.html", "utf8");
 
 let match;
 while ((match = INLINE_PATTERN.exec(resultHtml)) !== null) {
