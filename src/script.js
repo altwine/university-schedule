@@ -266,7 +266,6 @@ updateTitle();
 
 	async function renderSchedule(nowDate, scheduleUrl) {
 		updateTitle();
-		updateDinnerLine();
 
 		if (!lastSchedule || lastScheduleUrl !== scheduleUrl) {
 			try {
@@ -292,8 +291,6 @@ updateTitle();
 
 		updateLabels(lastSchedule);
 		document.title = `Расписание ${lastSchedule.group}`;
-		const today = new Date(nowDate);
-		today.setHours(0, 0, 0, 0);
 
 		const week = Array.from({ length: 7 }, (_, i) => {
 			const newDate = new Date(nowDate);
@@ -301,9 +298,8 @@ updateTitle();
 			return newDate;
 		});
 
-		const currentClasses = lastSchedule.classes.filter(
-			(c) => c.day == today.getDay() && c.dates.includes(nowDate.toLocaleDateString("en-CA")),
-		);
+		const nowDateFormatted = nowDate.toLocaleDateString("en-CA");
+		const currentClasses = lastSchedule.classes.filter((c) => c.dates.includes(nowDateFormatted));
 
 		DAY_SELECTOR_ELEMENTS.forEach((daySelector, dayIndex) => {
 			const dayNameEl = daySelector.querySelector("#day-name");
@@ -311,7 +307,9 @@ updateTitle();
 			const currentDay = week[dayIndex];
 			dayNameEl.textContent = WEEK_DAYS[currentDay.getDay()];
 			dayNumberEl.textContent = currentDay.getDate();
-			if (currentDay.getDate() == today.getDate()) dayNumberEl.classList.add("selected");
+			if (currentDay.getDate() == nowDate.getDate()) {
+				dayNumberEl.classList.add("selected");
+			}
 		});
 
 		CLASS_CONTAINER_ELEMENTS.forEach((classEl, classIndex) => {
@@ -330,8 +328,7 @@ updateTitle();
 				classInfoContainerEl.dataset.hash = "";
 				return;
 			}
-			const classHash =
-				initialFaculty + initialGroup + initialYear + nowDate.toLocaleDateString("en-CA") + classIndex;
+			const classHash = initialFaculty + initialGroup + initialYear + nowDateFormatted + classIndex;
 			classInfoContainerEl.dataset.hash = classHash;
 			let noteContent = notesData?.[classHash];
 			if (noteContent) {
