@@ -61,14 +61,10 @@ const changeableDate = new Date();
 
 const notesData = JSON.parse(localStorage.notes ?? "{}");
 
-let initialYear = SEARCH_PARAMS.get("year") ?? "2";
-let initialFaculty = SEARCH_PARAMS.get("faculty") ?? "2";
-let initialGroup = SEARCH_PARAMS.get("group") ?? "РПИа";
-
 let currentScheduleState = {
-	year: initialYear,
-	group: initialGroup,
-	faculty: initialFaculty,
+	year: SEARCH_PARAMS.get("year") ?? "2",
+	group: SEARCH_PARAMS.get("group") ?? "РПИа",
+	faculty: SEARCH_PARAMS.get("faculty") ?? "2",
 };
 let isClickAllowed = true;
 
@@ -94,7 +90,7 @@ function updateTitle() {
 
 function updateLabels(schedule) {
 	const uniqueClassTypes = Array.from(new Set(schedule.classes.map((c) => c.type))).filter(
-		(type) => CLASS_TYPES?.[type],
+		(type) => CLASS_TYPES[type],
 	);
 
 	uniqueClassTypes.sort((a, b) => CLASS_TYPES[b].name.length - CLASS_TYPES[a].name.length);
@@ -140,7 +136,7 @@ updateTitle();
 		} else if (touchendX > touchstartX) {
 			changeableDate.setDate(changeableDate.getDate() - 1);
 		}
-		renderSchedule(changeableDate, currentScheduleState);
+		renderSchedule(changeableDate);
 	});
 
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
@@ -159,7 +155,7 @@ updateTitle();
 	TODAY_BUTTON_ELEMENT.addEventListener("click", () => {
 		preventDoubleClick();
 		changeableDate.setTime(new Date().getTime());
-		renderSchedule(changeableDate, currentScheduleState);
+		renderSchedule(changeableDate);
 	});
 
 	CHANGE_THEME_ELEMENT.addEventListener("click", () => {
@@ -178,10 +174,7 @@ updateTitle();
 	let groups = null;
 	SELECT_GROUP_ELEMENT.addEventListener("click", async () => {
 		preventDoubleClick();
-		const cl = NOTES_EDITOR_ELEMENT.classList;
-		if (!cl.contains("hidden")) {
-			cl.add("hidden");
-		}
+		NOTES_EDITOR_ELEMENT.classList.add("hidden");
 		const cc = GROUP_SELECTOR_ELEMENT.classList;
 		if (!groups) {
 			const groupsResponse = await groupFetch;
@@ -198,7 +191,7 @@ updateTitle();
 				groupSelectorBody.appendChild(groupKeyBtn);
 			});
 			SEARCH_FIELD_ELEMENT.addEventListener("input", () => {
-				while (groupSelectorBody.firstChild) groupSelectorBody.firstChild.remove();
+				groupSelectorBody.replaceChildren();
 				groupsKeys
 					.filter((key) => key.toLowerCase().includes(SEARCH_FIELD_ELEMENT.value.toLowerCase()))
 					.forEach((groupKey) => {
@@ -213,15 +206,12 @@ updateTitle();
 			});
 			document.addEventListener("click", (event) => {
 				if (event?.target?.className !== "group-selector-element") return;
-				const { faculty, year, group } = event.target.dataset;
-				initialFaculty = faculty;
-				initialYear = year;
-				initialGroup = group;
+				Object.assign(currentScheduleState, event.target.dataset);
 				delete localStorage.cachedSchedule;
-				renderSchedule(changeableDate, event.target.dataset);
-				SEARCH_PARAMS.set("faculty", faculty);
-				SEARCH_PARAMS.set("year", year);
-				SEARCH_PARAMS.set("group", group);
+				renderSchedule(changeableDate);
+				SEARCH_PARAMS.set("faculty", currentScheduleState.faculty);
+				SEARCH_PARAMS.set("year", currentScheduleState.year);
+				SEARCH_PARAMS.set("group", currentScheduleState.group);
 				window.history.pushState(
 					"",
 					"",
@@ -229,7 +219,7 @@ updateTitle();
 				);
 				SEARCH_FIELD_ELEMENT.value = "";
 				groupSelectorBody.scrollTop = 0;
-				if (!cc.contains("hidden")) cc.add("hidden");
+				cc.add("hidden");
 			});
 		}
 		cc.toggle("hidden");
@@ -239,7 +229,7 @@ updateTitle();
 		daySelector.addEventListener("click", () => {
 			preventDoubleClick();
 			changeableDate.setDate(changeableDate.getDate() + dayIndex - 3);
-			renderSchedule(changeableDate, currentScheduleState);
+			renderSchedule(changeableDate);
 		});
 	});
 
@@ -254,7 +244,7 @@ updateTitle();
 			notesData[latestClassHash] = noteContent;
 		}
 		localStorage.notes = JSON.stringify(notesData);
-		renderSchedule(changeableDate, currentScheduleState);
+		renderSchedule(changeableDate);
 	});
 
 	let latestClassHash;
@@ -262,38 +252,31 @@ updateTitle();
 		const classInfoContainerEl = classEl.querySelector("#class-info-container");
 		classInfoContainerEl.addEventListener("click", () => {
 			const hash = classInfoContainerEl.dataset.hash;
-			if (hash == "") return;
+			if (hash === "") return;
 			latestClassHash = hash;
 			const cc = GROUP_SELECTOR_ELEMENT.classList;
-			if (!cc.contains("hidden")) cc.add("hidden");
+			cc.add("hidden");
 			const cl = NOTES_EDITOR_ELEMENT.classList;
 			cl.remove("hidden");
 			const classTitleEl = classInfoContainerEl.querySelector("#class-title");
-			const classTitleSplitted = classTitleEl.textContent.split(" ");
-			classTitleSplitted.shift();
-			NOTE_TITLE_ELEMENT.textContent = classTitleSplitted.join(" ");
+			NOTE_TITLE_ELEMENT.textContent = classTitleEl.textContent.split(" ").slice(1).join(" ");
 			NOTE_CONTENT_ELEMENT.value = notesData?.[hash] ?? "";
 		});
 	});
 
-	renderSchedule(changeableDate, currentScheduleState);
+	renderSchedule(changeableDate);
 
-	async function renderSchedule(nowDate, scheduleState) {
+	async function renderSchedule(nowDate) {
 		updateTitle();
 
 		if (
 			!lastSchedule ||
-			currentScheduleState.year !== scheduleState.year ||
-			currentScheduleState.group !== scheduleState.group ||
-			currentScheduleState.faculty !== scheduleState.faculty
+			currentScheduleState.year !== lastScheduleState.year ||
+			currentScheduleState.group !== lastScheduleState.group ||
+			currentScheduleState.faculty !== lastScheduleState.faculty
 		) {
 			try {
-				currentScheduleState.year = scheduleState.year;
-				currentScheduleState.group = scheduleState.group;
-				currentScheduleState.faculty = scheduleState.faculty;
-				lastScheduleState.year = currentScheduleState.year;
-				lastScheduleState.group = currentScheduleState.group;
-				lastScheduleState.faculty = currentScheduleState.faculty;
+				Object.assign(lastScheduleState, currentScheduleState);
 				const scheduleUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${currentScheduleState.faculty}/years/${currentScheduleState.year}/groups/${currentScheduleState.group}/schedule`;
 				const finalsUrl = `https://schedule.npi-tu.ru/api/v2/faculties/${currentScheduleState.faculty}/years/${currentScheduleState.year}/groups/${currentScheduleState.group}/finals-schedule`;
 				const [scheduleResponse, scheduleFinals] = await Promise.all([fetch(scheduleUrl), fetch(finalsUrl)]);
@@ -347,13 +330,13 @@ updateTitle();
 			const currentDay = week[dayIndex];
 			dayNameEl.textContent = WEEK_DAYS[currentDay.getDay()];
 			dayNumberEl.textContent = currentDay.getDate();
-			if (currentDay.getDate() == nowDate.getDate()) {
+			if (currentDay.getDate() === nowDate.getDate()) {
 				dayNumberEl.classList.add("selected");
 			}
 		});
 
 		CLASS_CONTAINER_ELEMENTS.forEach((classEl, classIndex) => {
-			const currentClass = currentClasses.find((c) => c.class == classIndex + 1);
+			const currentClass = currentClasses.find((c) => c.class === classIndex + 1);
 			const classInfoContainerEl = classEl.querySelector("#class-info-container");
 			const classInfoEl = classEl.querySelector(".class-info");
 			const classInfoTitleEl = classInfoEl.querySelector("#class-title");
@@ -363,17 +346,25 @@ updateTitle();
 				classInfoTitleEl.textContent = "";
 				classInfoLecturerEl.textContent = "";
 				classInfoNotePreviewEl.textContent = "";
-				classInfoContainerEl.style.border = "none";
-				classInfoContainerEl.style.opacity = "0";
 				classInfoContainerEl.dataset.hash = "";
-				classInfoContainerEl.style.position = "unset";
-				classInfoContainerEl.style.height = "unset";
-				classInfoContainerEl.style.width = "unset";
-				classInfoContainerEl.style.right = "unset";
-				classInfoContainerEl.style.zIndex = "unset";
+				Object.assign(classInfoContainerEl.style, {
+					border: "none",
+					opacity: "0",
+					position: "unset",
+					height: "unset",
+					width: "unset",
+					right: "unset",
+					zIndex: "unset",
+					backgroundColor: "unset",
+				});
 				return;
 			}
-			const classHash = initialFaculty + initialGroup + initialYear + nowDateFormatted + classIndex;
+			const classHash =
+				currentScheduleState.faculty +
+				currentScheduleState.group +
+				currentScheduleState.year +
+				nowDateFormatted +
+				classIndex;
 			classInfoContainerEl.dataset.hash = classHash;
 			let noteContent = notesData?.[classHash];
 			if (noteContent) {
@@ -393,18 +384,21 @@ updateTitle();
 			classInfoContainerEl.style.opacity = "1";
 
 			if (currentClass.tileSize) {
-				const prevWidth = getComputedStyle(classInfoContainerEl).width;
-				classInfoContainerEl.style.position = "absolute";
-				classInfoContainerEl.style.height = `${currentClass.tileSize}px`;
-				classInfoContainerEl.style.width = prevWidth;
-				classInfoContainerEl.style.right = "4px";
-				classInfoContainerEl.style.zIndex = 1;
+				Object.assign(classInfoContainerEl.style, {
+					position: "absolute",
+					height: `${currentClass.tileSize}px`,
+					width: getComputedStyle(classInfoContainerEl).width,
+					right: "4px",
+					zIndex: 1,
+				});
 			} else {
-				classInfoContainerEl.style.position = "unset";
-				classInfoContainerEl.style.height = "unset";
-				classInfoContainerEl.style.width = "unset";
-				classInfoContainerEl.style.right = "unset";
-				classInfoContainerEl.style.zIndex = "unset";
+				Object.assign(classInfoContainerEl.style, {
+					position: "unset",
+					height: "unset",
+					width: "unset",
+					right: "unset",
+					zIndex: "unset",
+				});
 			}
 		});
 	}
